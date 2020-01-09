@@ -1,0 +1,17 @@
+name: C/C++ CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Enter cmake dir
+      run: cd cmake
+    - name: Generate Makefiles
+      run: cmake -DCMAKE_INSTALL_PREFIX=/usr ..
+    - name: Generate package
+      run: make package
