@@ -10,6 +10,6 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Generate Makefiles
-      run: cmake -DCMAKE_INSTALL_PREFIX=/usr .
+      run: cd cmake; cmake -DCMAKE_INSTALL_PREFIX=/usr ..
     - name: Generate package
-      run: make package
+      run: cd cmake; make package
