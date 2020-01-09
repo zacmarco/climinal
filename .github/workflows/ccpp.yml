@@ -9,9 +9,7 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
-    - name: Enter cmake dir
-      run: cd cmake
     - name: Generate Makefiles
-      run: cmake -DCMAKE_INSTALL_PREFIX=/usr ..
+      run: cmake -DCMAKE_INSTALL_PREFIX=/usr .
     - name: Generate package
       run: make package
