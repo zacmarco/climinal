@@ -1,0 +1,17 @@
+<!--This is a test-->
+<context>
+    <prompt>flat</prompt>
+    <command>
+        <name>first</name>
+        <brief>"first command"</brief>
+        <help>"This is the first commmand"</help>
+        <function>cbk</function>
+    </command>
+    <command>
+        <name>second</name>
+        <brief>"second command"</brief>
+        <help>"This is the second commmand"</help>
+        <function>cbk</function>
+    </command>
+</context>
+

@@ -1,0 +1,89 @@
+<context>
+    <prompt>main</prompt>
+    <command>
+        <name>shell</name>
+        <brief>"runs the OS shell"</brief>
+        <help>"Executes the SHELL command to run user default shell application"</help>
+        <function>shell_cbk</function>
+    </command>
+    <command>
+        <name>info</name>
+        <brief>"gives some basic System info"</brief>
+        <help>"Prints basic system and setup information"</help>
+        <function>info_cbk</function>
+        <param>
+            <name>system</name>
+            <description>"specific subsystem"</description>
+            <required>true</required>
+            <numval>1</numval>
+            <reqval>true</reqval>
+            <values>info_system_val_cbk</values>
+        </param>
+        <command>
+            <name>all</name>
+            <brief>"gives additional System info"</brief>
+            <help>"Prints system and setup information, including kernel that is being used"</help>
+            <function>info_all_cbk</function>
+        </command>
+    </command>
+    <command>
+        <name>credits</name>
+        <brief>"info on this program"</brief>
+        <help>"Type this if you want to know something more about the author"</help>
+        <function>credits_cbk</function>
+    </command>
+    <command>
+        <name>config</name>
+        <brief>"enters the configuration context"</brief>
+        <help>"Type this command to test multi-context"</help>
+        <function>config_cbk</function>
+        <context>
+            <prompt>config</prompt>
+            <command>
+                <name>user</name>
+                <brief>"configures user properties"</brief>
+                <help>"This command configures user properties"</help>
+                <function>config_user_cbk</function>
+            </command>
+            <command>
+                <name>net</name>
+                <brief>"command to configure network"</brief>
+                <help>"This command is used to configure network interfaces"</help>
+                <function>config_net_cbk</function>
+                <command>
+                    <name>ip</name>
+                    <brief>"command to configure network IP address"</brief>
+                    <help>"This command is used to configure network IP address"</help>
+                    <function>config_net_ip_cbk</function>
+                </command>
+                <command>
+                    <name>interface</name>
+                    <brief>"sets the network interface to work on"</brief>
+                    <help>"This command is used to set network interface that will be used by all net commands"</help>
+                    <function>config_net_interface_cbk</function>
+                    <context>
+                        <prompt>interface</prompt>
+                        <command>
+                            <name>up</name>
+                            <brief>"brings UP the interface"</brief>
+                            <help>"This command enables the network interface"</help>
+                            <function>config_interface_up_cbk</function>
+                        </command>
+                        <command>
+                            <name>down</name>
+                            <brief>"puts DOWN the interface"</brief>
+                            <help>"This command disables the network interface"</help>
+                            <function>config_interface_down_cbk</function>
+                        </command>
+                    </context>
+                </command>
+                <command>
+                    <name>mask</name>
+                    <brief>"command to configure network IP nextmask"</brief>
+                    <help>"This command is used to configure network IP netmask"</help>
+                    <function>config_net_mask_cbk</function>
+                </command>
+            </command>
+        </context>
+    </command>
+</context>

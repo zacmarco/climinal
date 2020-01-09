@@ -1,0 +1,96 @@
+<!--This is a test-->
+<context>
+    <prompt>ct0</prompt>
+    <command>
+        <name>c0_a</name>
+        <brief>"c0_a"</brief>
+        <help>"Command 0_a"</help>
+        <function>cbk</function>
+    </command>
+    <command>
+        <name>c0_b</name>
+        <brief>"c0_b"</brief>
+        <help>"Command 0_b"</help>
+        <function>cbk</function>
+        <param>
+            <required>true</required>
+        </param>
+        <param>
+            <name>p0_b_1</name>
+            <required>true</required>
+            <numval>1</numval>
+            <reqval>true</reqval>
+            <values>values_cbk</values>
+        </param>
+        <param>
+            <name>p0_b_2</name>
+            <required>false</required>
+            <numval>2</numval>
+            <reqval>true</reqval>
+        </param>
+        <param>
+            <name>p0_b_3</name>
+            <required>false</required>
+            <numval>1</numval>
+            <reqval>false</reqval>
+        </param>
+        <param>
+            <name>p0_b_4</name>
+            <required>false</required>
+            <numval>3</numval>
+            <reqval>false</reqval>
+        </param>
+    </command>
+    <command>
+        <name>c0_c</name>
+        <brief>"c0_c"</brief>
+        <help>"Command 0_c"</help>
+        <function>cbk</function>
+        <command>
+            <name>c0_c_a</name>
+            <brief>"c0_c_a"</brief>
+            <help>"Command 0_c_a"</help>
+            <function>cbk</function>
+            <param>
+                <name>p0_b_1</name>
+                <required>true</required>
+                <numval>1</numval>
+                <reqval>true</reqval>
+            </param>
+            <param>
+                <name>p0_b_2</name>
+                <required>false</required>
+                <numval>2</numval>
+                <reqval>true</reqval>
+            </param>
+                <param>
+                <name>p0_b_3</name>
+                <required>false</required>
+                <numval>1</numval>
+                <reqval>false</reqval>
+            </param>
+                <param>
+                <name>p0_b_4</name>
+                <required>false</required>
+                <numval>3</numval>
+                <reqval>false</reqval>
+            </param>
+        </command>
+    </command>
+    <command>
+        <name>c0_d</name>
+        <brief>"c0_d"</brief>
+        <help>"Command 0_d"</help>
+        <function>cbk</function>
+        <context>
+            <prompt>ct1</prompt>
+            <command>
+                <name>c1_a</name>
+                <brief>"c1_a"</brief>
+                <help>"Command 1_a"</help>
+                <function>cbk</function>
+            </command>
+        </context>
+    </command>
+</context>
+

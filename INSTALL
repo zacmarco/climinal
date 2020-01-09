@@ -1,0 +1,14 @@
+Please enter the "cmake" directory and type:
+
+  cmake -DCMAKE_INSTALL_PREFIX=<your_prefix> ..
+
+
+And then follow the usual make procedure
+
+  make
+  make install
+
+
+Thank you
+
+ zacmarco

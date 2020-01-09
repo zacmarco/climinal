@@ -1,0 +1,30 @@
+CLIMINAL EXAMPLE
+***********
+
+This directory contains a sample CLI implementation,
+just to show what are the needed elements to build a simple CLI.
+
+Files in this directory are:
+
+ - flat.xml : main XML file that contains the CLI structure
+ - flat_cbk.c : C file containing the command callbacks implementation
+ - flat_main.c : C file that just implements the main() function
+ - README : this file ;)
+
+In order to build this fully working example, please run the following commands,
+after installing CLIMINAL libraries and tools
+
+
+
+ my-linux-box$ climinalbuilder flat.xml flat
+ my-linux-box$ cc -o flat *.c  -lcliminal -lm
+
+
+
+Now you're ready to run the sample CLI application:
+
+my-linux-box$ ./flat
+
+ENJOY
+
+  Zac
