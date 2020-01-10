@@ -54,11 +54,11 @@ jobs:
     - name: Generate Makefiles
       run: cd cmake; cmake -DCMAKE_INSTALL_PREFIX=../verify ..
     - name: Generate and install library
-      run: cd cmake && make package && make install
+      run: cd cmake && make install
     - name: Generate tools Makefiles
       run: cd tools/cmake && cmake -DCMAKE_INSTALL_PREFIX=../../verify ..
     - name: Generate and install tools
-      run: cd tools/cmake && make package && make install
+      run: cd tools/cmake && make install
     - name: Run climinalbuilder
       run: cd examples/testtool && ../../verify/bin/climinalbuilder testtool.xml testtool 
     - name: Build testtool
