@@ -13,6 +13,12 @@ config.h
 examples/testtool/testtool
 examples/testtool/testtool.c
 examples/testtool/testtool.h
+examples/flat/flat
+examples/flat/flat.c
+examples/flat/flat.h
+examples/nettool/nettool
+examples/nettool/nettool.c
+examples/nettool/nettool.h
 tools/cmake/CMakeCache.txt
 tools/cmake/CMakeFiles/
 tools/cmake/CPackConfig.cmake
