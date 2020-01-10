@@ -17,5 +17,7 @@ jobs:
       run: cd tools/cmake && cmake -DCMAKE_INSTALL_PREFIX=../../verify ..
     - name: Generate and install tools
       run: cd tools/cmake && make package && make install
+    - name: Run climinalbuilder
+      run: cd examples/testtool && ../../verify/bin/climinalbuilder testtool.xml testtool 
     - name: Build testtool
-      run: cd examples/testtool && ../../verify/bin/climinalbuilder testtool.xml testtool && cc *.c -I$PWD/../../verify/include -L$PWD/../../verify/lib/ -lcliminal -lm -o testtool
+      run: cd examples/testtool && gcc *.c -I$PWD/../../verify/include -L$PWD/../../verify/lib/ -lcliminal -lm -o testtool
