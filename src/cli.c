@@ -932,16 +932,13 @@ void destroycmdinfo( Cmdinfo *cmdinfo )
 
     for( paramcount=0; paramcount<cmdinfo->paramnum; ++paramcount )
     {
+        valcount=0;
         if( cmdinfo->param[paramcount]->name )
             free( cmdinfo->param[paramcount]->name );
-        if( cmdinfo->param[paramcount]->value )
+        while( cmdinfo->param[paramcount]->value[valcount] )
         {
-            valcount=0;
-            while( cmdinfo->param[paramcount]->value[valcount] )
-            {
-                free( cmdinfo->param[paramcount]->value[valcount] );
-                valcount++;
-            }
+            free( cmdinfo->param[paramcount]->value[valcount] );
+            valcount++;
         }
         free( cmdinfo->param[paramcount] );
     }
