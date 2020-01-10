@@ -1,6 +1,6 @@
 /*
    Climinal
-   Copyright (C) 2019, Marco Zaccheria
+   Copyright (C) 2020, Marco Zaccheria
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
