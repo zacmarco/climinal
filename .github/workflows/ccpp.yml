@@ -10,6 +10,12 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Generate Makefiles
-      run: cd cmake; cmake -DCMAKE_INSTALL_PREFIX=/usr ..
-    - name: Generate package
-      run: cd cmake; make package
+      run: cd cmake; cmake -DCMAKE_INSTALL_PREFIX=../verify ..
+    - name: Generate and install library
+      run: cd cmake && make package && make install
+    - name: Generate tools Makefiles
+      run: cd tools/cmake && cmake -DCMAKE_INSTALL_PREFIX=../../verify ..
+    - name: Generate and install tools
+      run: cd tools/cmake && make package && make install
+    - name: Build testtool
+      run: cd examples/testtool && ../../verify/bin/climinalbuilder testtool.xml testtool && cc *.c -I$PWD/../../verify/include -L$PWD/../../verify/lib/ -lcliminal -lm -o testtool
