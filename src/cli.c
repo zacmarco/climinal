@@ -222,7 +222,7 @@ static Cliparam *find_active_param( Clisession *session )
     char *next_data;
     Cliparam *param, *active_param=NULL;
     char word[MAX_BUFLEN];
-    int len=0;
+    unsigned int len=0;
     char *last;
 
     if( !session->active_cmd ) {
@@ -424,7 +424,7 @@ exit:
     return retval;
 }
 
-static char **completion_matches( Clisession *session, const char *text, int len )
+static char **completion_matches( Clisession *session, const char *text, unsigned int len )
 {
     char *tempBuf;
     char **retval=NULL;
@@ -440,7 +440,7 @@ static char **completion_matches( Clisession *session, const char *text, int len
         /* Potential matches */
         int p_matches, count;
         char *p_val[MAX_NUM_COMPL_ENTRIES];
-        int len, i;
+        unsigned int len, i;
         last=last_word(session->term.buffer, session->term.buffer+session->term.pos, &len);
         strncpy(word, last, len);
         word[len]='\0';
@@ -513,7 +513,7 @@ static char **completion (Clisession *session, const char *text, int start, int 
 
 /*
     char *last;
-    int len;
+    unsigned int len;
     last=last_word(session->term.buffer, session->term.buffer+session->term.len, &len);
     strncpy(word, last, len);
     word[len]='\0';
