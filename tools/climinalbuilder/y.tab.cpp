@@ -65,6 +65,8 @@
 #line 1 "../climinalbuilder/climinalbuilder.y" /* yacc.c:339  */
 
 
+#define YYSTYPE char *
+
 #include <stdio.h>
 #include <string.h>
 #include <termios.h>
@@ -84,7 +86,7 @@ static char *values=NULL;
 static char *description=NULL;
 
 
-#line 88 "../climinalbuilder/y.tab.cpp" /* yacc.c:339  */
+#line 90 "../climinalbuilder/y.tab.cpp" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -170,7 +172,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 174 "../climinalbuilder/y.tab.cpp" /* yacc.c:358  */
+#line 176 "../climinalbuilder/y.tab.cpp" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -470,9 +472,9 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    62,    62,    64,    68,    71,    72,    75,    79,    89,
-      97,    98,   101,   105,   107,   111,   124,   130,   131,   134,
-     151,   166,   171,   175,   180
+       0,    64,    64,    66,    70,    73,    74,    77,    81,    91,
+      99,   100,   103,   107,   109,   113,   126,   132,   133,   136,
+     153,   168,   173,   177,   182
 };
 #endif
 
@@ -1031,15 +1033,15 @@ yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep)
   switch (yytype)
     {
           case 20: /* STR  */
-#line 23 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1257  */
+#line 25 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1257  */
       { free((void*)((*yyvaluep))); }
-#line 1037 "../climinalbuilder/y.tab.cpp" /* yacc.c:1257  */
+#line 1039 "../climinalbuilder/y.tab.cpp" /* yacc.c:1257  */
         break;
 
     case 22: /* TXT  */
-#line 23 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1257  */
+#line 25 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1257  */
       { free((void*)((*yyvaluep))); }
-#line 1043 "../climinalbuilder/y.tab.cpp" /* yacc.c:1257  */
+#line 1045 "../climinalbuilder/y.tab.cpp" /* yacc.c:1257  */
         break;
 
 
@@ -1301,28 +1303,28 @@ yyreduce:
   switch (yyn)
     {
         case 8:
-#line 80 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
+#line 82 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
     {
             int ret;
             ret = create_context((const char*)(yyvsp[-1]));
             //printf("Create context:%s, return:%d\n", $4, ret);
             FREE((yyvsp[-1]));
         }
-#line 1312 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
+#line 1314 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 90 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
+#line 92 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
     {
             int ret;
             ret = end_context();
             //printf("End context\n");
         }
-#line 1322 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
+#line 1324 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 112 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
+#line 114 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
     {
             int ret;
             ret = create_command((const char*)(yyvsp[-10]), (const char*)(yyvsp[-7]), (const char*)(yyvsp[-4]), (const char*)(yyvsp[-1]));
@@ -1332,22 +1334,22 @@ yyreduce:
             FREE((yyvsp[-4]));
             FREE((yyvsp[-1]));
         }
-#line 1336 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
+#line 1338 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 125 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
+#line 127 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
     {
             end_command();
         }
-#line 1344 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
+#line 1346 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 135 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
+#line 137 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
     {                                                           
             int ret;
-            ret = create_param( (const char*)(yyvsp[-13]), (const char*)description, (yyvsp[-9]), (yyvsp[-6]), (yyvsp[-3]), (const char*)values );           
+            ret = create_param( (const char*)(yyvsp[-13]), (const char*)description, atoi((yyvsp[-9])), atoi((yyvsp[-6])), atoi((yyvsp[-3])), values );           
             //printf("Create param:%s, return:%d\n", $3, ret);
             FREE((yyvsp[-13]));
             end_param();
@@ -1360,14 +1362,14 @@ yyreduce:
                 description=NULL;
             }
         }
-#line 1364 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
+#line 1366 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 152 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
+#line 154 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
     {
             int ret;
-            ret = create_param( NULL, NULL, (yyvsp[-3]), 1, 1, values );
+            ret = create_param( NULL, NULL, atoi((yyvsp[-3])), 1, 1, values );
             //printf("Create def param, return:%d\n", ret);
             end_param();
             if(values) {
@@ -1375,29 +1377,29 @@ yyreduce:
                 values=NULL;
             }
         }
-#line 1379 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
+#line 1381 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 167 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
+#line 169 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
     {
             description=strdup((const char*)(yyvsp[-1]));
             FREE((yyvsp[-1]));
         }
-#line 1388 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
+#line 1390 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 176 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
+#line 178 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
     {
             values=strdup((const char*)(yyvsp[-1]));
             FREE((yyvsp[-1]));
         }
-#line 1397 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
+#line 1399 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
     break;
 
 
-#line 1401 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
+#line 1403 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1625,7 +1627,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 182 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1906  */
+#line 184 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1906  */
 
 
 extern FILE *yyin;

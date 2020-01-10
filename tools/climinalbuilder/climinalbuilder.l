@@ -1,7 +1,9 @@
 %{
+#define YYSTYPE char *
 #include "y.tab.hpp"
 #include <stdlib.h>
 #include <stdio.h>
+
 
 extern "C" int     yylex(void);
 extern FILE *yyin;
@@ -49,8 +51,8 @@ inline char *getString( const char *in )
 \<\/command\>                                                   return ENDCMD;
 \<\/param\>                                                     return ENDPAR;
 
-true                                yylval=(long)1;             return BOOL;
-false                               yylval=(long)0;             return BOOL;
+true                                yylval=strdup("1");         return BOOL;
+false                               yylval=strdup("0");         return BOOL;
 
 
 \<brief\>                                                       return BRIEF;
@@ -79,14 +81,14 @@ false                               yylval=(long)0;             return BOOL;
 
 \"[^\^\^\"^\'$]+\"            {   
                                     yytext[strlen(yytext)-1] = '\0'; 
-                                    yylval=(long) getString(yytext+1);
+                                    yylval=getString(yytext+1);
                                     return STR; 
-                                }
+                              }
 
 
 
-[0-9]+                          yylval=(long) atoi(yytext);     return NUM;
-[-_a-zA-Z0-9\.]+                 yylval=(long) strdup(yytext);   return TXT;
+[0-9]+                           yylval=strdup(yytext);   return NUM;
+[-_a-zA-Z0-9\.]+                 yylval=strdup(yytext);   return TXT;
 \n                                                              ;
 .                                                               ;
 
