@@ -64,4 +64,4 @@ jobs:
     - name: Build testtool
       run: cd examples/testtool && gcc *.c -I$PWD/../../verify/include -L$PWD/../../verify/lib/ -lcliminal -lm -o testtool && ls -l
     - name: Run testtool
-      run: cd examples/testtool && echo bye | LD_LIBRARY_PATH=../../verify/lib/ ./testtool 
+      run: cd examples/testtool && echo bye | DYLD_LIBRARY_PATH=../../verify/lib/ ./testtool 
