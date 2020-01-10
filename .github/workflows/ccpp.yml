@@ -3,7 +3,7 @@ name: C/C++ CI
 on: [push]
 
 jobs:
-  build:
+  build-ubuntu-16_04:
 
     runs-on: ubuntu-16.04
     
@@ -23,3 +23,45 @@ jobs:
       run: cd examples/testtool && gcc *.c -I$PWD/../../verify/include -L$PWD/../../verify/lib/ -lcliminal -lm -o testtool && ls -l
     - name: Run testtool
       run: cd examples/testtool && echo bye | LD_LIBRARY_PATH=../../verify/lib/ ./testtool 
+
+  build-ubuntu-latest:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Generate Makefiles
+      run: cd cmake; cmake -DCMAKE_INSTALL_PREFIX=../verify ..
+    - name: Generate and install library
+      run: cd cmake && make package && make install
+    - name: Generate tools Makefiles
+      run: cd tools/cmake && cmake -DCMAKE_INSTALL_PREFIX=../../verify ..
+    - name: Generate and install tools
+      run: cd tools/cmake && make package && make install
+    - name: Run climinalbuilder
+      run: cd examples/testtool && ../../verify/bin/climinalbuilder testtool.xml testtool 
+    - name: Build testtool
+      run: cd examples/testtool && gcc *.c -I$PWD/../../verify/include -L$PWD/../../verify/lib/ -lcliminal -lm -o testtool && ls -l
+    - name: Run testtool
+      run: cd examples/testtool && echo bye | LD_LIBRARY_PATH=../../verify/lib/ ./testtool 
+
+  build-macos-latest:
+
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Generate Makefiles
+      run: cd cmake; cmake -DCMAKE_INSTALL_PREFIX=../verify ..
+    - name: Generate and install library
+      run: cd cmake && make install
+    - name: Generate tools Makefiles
+      run: cd tools/cmake && cmake -DCMAKE_INSTALL_PREFIX=../../verify ..
+    - name: Generate and install tools
+      run: cd tools/cmake && make install
+    - name: Run climinalbuilder
+      run: cd examples/testtool && ../../verify/bin/climinalbuilder testtool.xml testtool 
+    - name: Build testtool
+      run: cd examples/testtool && gcc *.c -I$PWD/../../verify/include -L$PWD/../../verify/lib/ -lcliminal -lm -o testtool && ls -l
+    - name: Run testtool
+      run: cd examples/testtool && echo bye | DYLD_LIBRARY_PATH=../../verify/lib/ ./testtool 
