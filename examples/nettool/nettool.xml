@@ -61,6 +61,10 @@
                     <brief>"sets the network interface to work on"</brief>
                     <help>"This command is used to set network interface that will be used by all net commands"</help>
                     <function>config_net_interface_cbk</function>
+                    <param>
+                        <required>false</required>
+                        <values>config_net_interface_values</values>
+                    </param>
                     <context>
                         <prompt>interface</prompt>
                         <command>

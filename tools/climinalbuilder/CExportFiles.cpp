@@ -20,6 +20,7 @@
 */
 
 #include "CExportFiles.h"
+#include <iostream>
 
 CExportFiles* CExportFiles::m_instance = NULL;
 
@@ -343,39 +344,48 @@ void CExportFiles::WriteCallbackHeader()
   oss->str("");
 }
 
-void CExportFiles::WriteValuesCallbackHeader()
+void CExportFiles::WriteValuesCallbackRules(const MapCommands* mc)
 {
-    MapContexts::iterator it;
-    MapCommands::iterator itcmd;
+    MapCommands::const_iterator itcmd;
     ListParameters::iterator itpar;
-    MapCommands* mc; 
 
-    *oss << "/*Values Completion Callbacks*/\n";
-
-    for( it = mCtx->begin(); it != mCtx->end(); ++it) {
-        mc = it->second->mapCommands,&it->first;
-
-        for(itcmd = mc->begin(); itcmd != mc->end(); ++itcmd)
-        {
-            if(itcmd->second->HasParameters())
+    for(itcmd = mc->begin(); itcmd != mc->end(); ++itcmd)
+    {
+        if(itcmd->second->HasParameters()) {
+            for(itpar = itcmd->second->lpParams->begin(); itpar != itcmd->second->lpParams->end(); ++itpar)
             {
-
-                //if(itcmd->second->HasDefaultParameter()) //check to write default parameter as first row in .c file
-                //{
-                    for(itpar = itcmd->second->lpParams->begin(); itpar != itcmd->second->lpParams->end(); ++itpar)
-                    {
-                        if( (*(*itpar)->getValues()).length() > 0 )
-                        {
-                            *oss << "int " << (*(*itpar)->getValues()) << "(char **val, const char *cookie);\n";
-                        }
-                    }
-                //}
+                std::cout << "PAR:" << *(*itpar)->getNamePtr() << std::endl;
+                if( (*(*itpar)->getValues()).length() > 0 )
+                {
+                    *oss << "int " << (*(*itpar)->getValues()) << "(char **val, const char *cookie);\n";
+                }
             }
         }
+        if(itcmd->second->HasSubCommands())
+        {
+            WriteValuesCallbackRules(itcmd->second->mcSubCommands);
+        }
     }
-    *oss << "\n\n";
-    *fh << oss->str();
-    oss->str("");
+}
+
+void CExportFiles::WriteValuesCallbackHeader()
+{
+  if(fh == NULL)
+    return;
+
+  if(mCtx == NULL)
+    return;
+  
+  *oss << "\n/* Values Callbacks */\n\n";
+
+  MapContexts::iterator it;
+  MapCommands::iterator itcmd;
+  for( it = mCtx->begin(); it != mCtx->end(); ++it)
+    WriteValuesCallbackRules(it->second->mapCommands);
+
+  *oss << "\n";
+  *fh << oss->str();
+  oss->str("");
 }
 
 

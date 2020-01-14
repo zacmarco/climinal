@@ -438,7 +438,7 @@ static char **completion_matches( Clisession *session, const char *text, unsigne
         /* Let's complete param values if needed */
         char *last, *to_complete, word[MAX_BUFLEN], word_to_complete[MAX_BUFLEN];
         /* Potential matches */
-        int p_matches, count;
+        int p_matches=0, count;
         char *p_val[MAX_NUM_COMPL_ENTRIES];
         unsigned int len, i;
         last=last_word(session->term.buffer, session->term.buffer+session->term.pos, &len);
@@ -452,28 +452,46 @@ static char **completion_matches( Clisession *session, const char *text, unsigne
         }
         word_to_complete[len]='\0';
 
+        /* Step 1: looking at regular params first */
         Cliparam *param=session->active_cmd->param;
-        while(param->name) {
-            if(!strcmp(param->name, word) && param->val) {
+        while( (param->name) && (!p_matches) ) {
+            if( strlen(param->name)>0 ) {
+                if( (!strcmp(param->name, word)) && (param->val)) {
 
-                /* Let's call customer callback */
-                p_matches=param->val(p_val, word_to_complete);
+                    /* Let's call customer callback */
+                    p_matches=param->val(p_val, word_to_complete);
+                }
+            } 
+            param++;
+        } 
 
-                for(count=0; count<p_matches; ++count) {
-                    if( (! (strncmp(to_complete, p_val[count], len) && to_complete) ) ) {
-                        if( (!retval) && !(retval = malloc( MAX_NUM_COMPL_ENTRIES * sizeof(char*)) ) ) {
-                            for(i=0; i<p_matches;++i) {
-                                free(p_val[i]);
-                            }
-                            return NULL;
+        /* Step 2: if no regular param found, completing value for default param */
+        if(!p_matches) {
+            param=session->active_cmd->param;
+            while( (param->name) && (!p_matches) ) {
+                if( (strlen(param->name)==0) && (param->val) ) {
+                    /* Let's call customer callback */
+                    p_matches=param->val(p_val, word_to_complete);
+                } 
+                param++;
+            } 
+        }
+
+        /* If some values have been completed, print and free */
+        if(p_matches) {
+            for(count=0; count<p_matches; ++count) {
+                if( (! (strncmp(to_complete, p_val[count], len) && to_complete) ) ) {
+                    if( (!retval) && !(retval = malloc( MAX_NUM_COMPL_ENTRIES * sizeof(char*)) ) ) {
+                        for(i=0; i<p_matches;++i) {
+                            free(p_val[i]);
                         }
-                        retval[matches++]=p_val[count];
-                    } else {
-                        free(p_val[count]);
+                        return NULL;
                     }
+                    retval[matches++]=p_val[count];
+                } else {
+                    free(p_val[count]);
                 }
             }
-            param++;
         }
     }
 

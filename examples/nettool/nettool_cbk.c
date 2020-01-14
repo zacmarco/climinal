@@ -1,6 +1,9 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <ifaddrs.h>
+
 #include "nettool.h"
 
 typedef struct priv_data_S
@@ -56,8 +59,54 @@ int config_net_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line)
     return CLIMINAL_E_INVALID;
 }
 
+int config_net_interface_values(char **val, const char *cookie) {
+    struct ifaddrs *ifaddr, *ifa;
+    int n;
+
+    if (getifaddrs(&ifaddr) == -1) {
+        perror("getifaddrs");
+        exit(EXIT_FAILURE);
+    }
+
+    /* Walk through linked list, maintaining head pointer so we
+       can free list later */
+
+    ifa=ifaddr;
+    n=0;
+
+    while(ifa) {
+        if(ifa->ifa_addr->sa_family==AF_PACKET) {
+            val[n++]=strdup(ifa->ifa_name);
+        }
+        ifa=ifa->ifa_next;
+    }
+
+    return n;
+}
+
 int config_net_interface_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line)
 {
+    struct ifaddrs *ifaddr, *ifa;
+    int n;
+
+    if (getifaddrs(&ifaddr) == -1) {
+        perror("getifaddrs");
+        exit(EXIT_FAILURE);
+    }
+
+    /* Walk through linked list, maintaining head pointer so we
+       can free list later */
+
+    ifa=ifaddr;
+    n=0;
+
+    while(ifa) {
+        if(ifa->ifa_addr->sa_family==AF_PACKET) {
+            fprintf(out, "IF %u: %s\n", n, ifa->ifa_name);
+            n++;
+        }
+        ifa=ifa->ifa_next;
+    }
     if( CLIMINAL_GET_DEFVAL(info) )
         strcpy(priv_data.ifname, CLIMINAL_GET_DEFVAL(info));
     else

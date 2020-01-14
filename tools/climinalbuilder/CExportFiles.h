@@ -59,6 +59,7 @@ private:
     void WriteCommandDefs(ostringstream* ossBrief,ostringstream* ossBriefDef, ostringstream* ossHelp, ostringstream* ossHelpDef,
                           const MapCommands* mc,const string* sCtxName,const string* sCmdName = NULL);
     void WriteCallbackRules(const MapCommands* mc,const string* sCtxName,const string* sCmdName = NULL);
+    void WriteValuesCallbackRules(const MapCommands* mc);
     void WriteParametersRules(const MapCommands* mc,const string* sCtxName,const string* sCmdName = NULL);
     void WriteParametersDefs(const MapCommands* mc,const string* sCtxName,const string* sCmdName = NULL);
 
