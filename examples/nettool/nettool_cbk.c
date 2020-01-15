@@ -81,6 +81,7 @@ int config_net_interface_values(char **val, const char *cookie) {
         ifa=ifa->ifa_next;
     }
 
+    freeifaddrs(ifaddr);
     return n;
 }
 
