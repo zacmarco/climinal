@@ -87,31 +87,43 @@ int config_net_interface_values(char **val, const char *cookie) {
 int config_net_interface_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line)
 {
     struct ifaddrs *ifaddr, *ifa;
-    int n;
+    int found=0;
+    char *val;
+    int err=CLIMINAL_NO_ERROR;
 
-    if (getifaddrs(&ifaddr) == -1) {
-        perror("getifaddrs");
-        exit(EXIT_FAILURE);
-    }
+    val=CLIMINAL_GET_DEFVAL(info);
 
-    /* Walk through linked list, maintaining head pointer so we
-       can free list later */
-
-    ifa=ifaddr;
-    n=0;
-
-    while(ifa) {
-        if(ifa->ifa_addr->sa_family==AF_PACKET) {
-            fprintf(out, "IF %u: %s\n", n, ifa->ifa_name);
-            n++;
+    if(val) {
+        if (getifaddrs(&ifaddr) == -1) {
+            err=CLIMINAL_E_INVALID;
+            goto exit;
         }
-        ifa=ifa->ifa_next;
-    }
-    if( CLIMINAL_GET_DEFVAL(info) )
-        strcpy(priv_data.ifname, CLIMINAL_GET_DEFVAL(info));
-    else
+
+        ifa=ifaddr;
+        while( (ifa) && (!found) ) {
+            if(ifa->ifa_addr->sa_family==AF_PACKET) {
+                if(!strcmp(ifa->ifa_name, val)) {
+                    found=1;
+                }
+            }
+            ifa=ifa->ifa_next;
+        }
+
+        freeifaddrs(ifaddr);
+
+        if( found ) {
+            strcpy(priv_data.ifname, val);
+            fprintf( out, "Current interface: \"%s\"\n", priv_data.ifname );
+        } else {
+            fprintf( out, "Interface \'%s\' not found\n", val );
+            err=CLIMINAL_E_NOT_FOUND;
+            goto exit;
+        }
+    } else {
         fprintf( out, "Current interface: \"%s\"\n", priv_data.ifname );
-    return CLIMINAL_NO_ERROR;
+    }
+exit:
+    return err;
 }
 
 int config_net_ip_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line)

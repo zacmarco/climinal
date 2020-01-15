@@ -20,7 +20,6 @@
 */
 
 #include "CExportFiles.h"
-#include <iostream>
 
 CExportFiles* CExportFiles::m_instance = NULL;
 
@@ -354,7 +353,6 @@ void CExportFiles::WriteValuesCallbackRules(const MapCommands* mc)
         if(itcmd->second->HasParameters()) {
             for(itpar = itcmd->second->lpParams->begin(); itpar != itcmd->second->lpParams->end(); ++itpar)
             {
-                std::cout << "PAR:" << *(*itpar)->getNamePtr() << std::endl;
                 if( (*(*itpar)->getValues()).length() > 0 )
                 {
                     *oss << "int " << (*(*itpar)->getValues()) << "(char **val, const char *cookie);\n";
