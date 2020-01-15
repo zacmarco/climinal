@@ -30,12 +30,13 @@ extern "C"
     {
         CLIMINAL_NO_ERROR,
         CLIMINAL_E_GENERIC,
+        CLIMINAL_E_NO_CONTEXT_SWITCH,
         CLIMINAL_E_EXIT,
         CLIMINAL_E_INVALID,
         CLIMINAL_E_NOT_FOUND,
         CLIMINAL_E_MEMORY,
         CLIMINAL_E_CONF,
-        CLIMINAL_E_VALUE
+        CLIMINAL_E_VALUE 
     };
 
 #define CLIMINAL_SUCCESS(foo)    ( (foo) == CLIMINAL_NO_ERROR )

@@ -120,7 +120,15 @@ int config_net_interface_cbk(FILE* in, FILE* out, const Cmdinfo *info, const cha
             goto exit;
         }
     } else {
-        fprintf( out, "Current interface: \"%s\"\n", priv_data.ifname );
+        if( strlen(priv_data.ifname) > 0 ) {
+            fprintf( out, "Current interface: \"%s\"\n", priv_data.ifname );
+            err=CLIMINAL_E_GENERIC;
+            goto exit;
+        } else {
+            fprintf( out, "No interface selected yet\n" );
+            err=CLIMINAL_E_NOT_FOUND;
+            goto exit;
+        }
     }
 exit:
     return err;

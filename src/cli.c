@@ -129,7 +129,7 @@ static inline int execute( const Clisession *session, const Clicmd *cmd, const c
                         fprintf(session->term.out, ">> MISSING PARAMETER: \"%s\"\n", param->name);
                     }
                 }
-                else if( (param->reqval) && !(cmdinfo->defval) )
+                else if( (param->required) && !(cmdinfo->defval) )
                 {
                     ok = 0;
                     fprintf(session->term.out, ">> MISSING DEFAULT PARAMETER\n");
