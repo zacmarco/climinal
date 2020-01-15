@@ -13,7 +13,9 @@ inline char *getString( const char *in )
     int count_in=0, count_out=0;
     char *out = NULL;
 
-    if( out = (char*) malloc(strlen(in)+1) )
+    out = (char*)malloc(strlen(in)+1);
+
+    if(out)
     {
         while( count_in < strlen(in) )
         {
