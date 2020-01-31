@@ -80,13 +80,14 @@
 #define BOOL2INT(str)   ( ( strcmp((const char*)str,"true") ) ? 0:1 )
 
 extern "C" int  yylex(void);
+
 void            yyerror(const char*);
 
-static char *values=NULL;
-static char *description=NULL;
+char *values=NULL;
+char *description=NULL;
 
 
-#line 90 "../climinalbuilder/y.tab.cpp" /* yacc.c:339  */
+#line 91 "../climinalbuilder/y.tab.cpp" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -172,7 +173,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 176 "../climinalbuilder/y.tab.cpp" /* yacc.c:358  */
+#line 177 "../climinalbuilder/y.tab.cpp" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -472,9 +473,9 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    64,    64,    66,    70,    73,    74,    77,    81,    91,
-      99,   100,   103,   107,   109,   113,   126,   132,   133,   136,
-     153,   168,   173,   177,   182
+       0,    65,    65,    67,    71,    74,    75,    78,    82,    92,
+     100,   101,   104,   108,   110,   114,   127,   133,   134,   137,
+     154,   169,   174,   178,   183
 };
 #endif
 
@@ -1033,15 +1034,15 @@ yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep)
   switch (yytype)
     {
           case 20: /* STR  */
-#line 25 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1257  */
+#line 26 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1257  */
       { free((void*)((*yyvaluep))); }
-#line 1039 "../climinalbuilder/y.tab.cpp" /* yacc.c:1257  */
+#line 1040 "../climinalbuilder/y.tab.cpp" /* yacc.c:1257  */
         break;
 
     case 22: /* TXT  */
-#line 25 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1257  */
+#line 26 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1257  */
       { free((void*)((*yyvaluep))); }
-#line 1045 "../climinalbuilder/y.tab.cpp" /* yacc.c:1257  */
+#line 1046 "../climinalbuilder/y.tab.cpp" /* yacc.c:1257  */
         break;
 
 
@@ -1303,28 +1304,28 @@ yyreduce:
   switch (yyn)
     {
         case 8:
-#line 82 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
+#line 83 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
     {
             int ret;
             ret = create_context((const char*)(yyvsp[-1]));
             //printf("Create context:%s, return:%d\n", $4, ret);
             FREE((yyvsp[-1]));
         }
-#line 1314 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
+#line 1315 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 92 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
+#line 93 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
     {
             int ret;
             ret = end_context();
             //printf("End context\n");
         }
-#line 1324 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
+#line 1325 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 114 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
+#line 115 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
     {
             int ret;
             ret = create_command((const char*)(yyvsp[-10]), (const char*)(yyvsp[-7]), (const char*)(yyvsp[-4]), (const char*)(yyvsp[-1]));
@@ -1334,19 +1335,19 @@ yyreduce:
             FREE((yyvsp[-4]));
             FREE((yyvsp[-1]));
         }
-#line 1338 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
+#line 1339 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 127 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
+#line 128 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
     {
             end_command();
         }
-#line 1346 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
+#line 1347 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 137 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
+#line 138 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
     {                                                           
             int ret;
             ret = create_param( (const char*)(yyvsp[-13]), (const char*)description, atoi((yyvsp[-9])), atoi((yyvsp[-6])), atoi((yyvsp[-3])), values );           
@@ -1362,11 +1363,11 @@ yyreduce:
                 description=NULL;
             }
         }
-#line 1366 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
+#line 1367 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 154 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
+#line 155 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
     {
             int ret;
             ret = create_param( NULL, NULL, atoi((yyvsp[-3])), 1, 1, values );
@@ -1377,29 +1378,29 @@ yyreduce:
                 values=NULL;
             }
         }
-#line 1381 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
+#line 1382 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 169 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
+#line 170 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
     {
             description=strdup((const char*)(yyvsp[-1]));
             FREE((yyvsp[-1]));
         }
-#line 1390 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
+#line 1391 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 178 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
+#line 179 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1646  */
     {
             values=strdup((const char*)(yyvsp[-1]));
             FREE((yyvsp[-1]));
         }
-#line 1399 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
+#line 1400 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
     break;
 
 
-#line 1403 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
+#line 1404 "../climinalbuilder/y.tab.cpp" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1627,7 +1628,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 184 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1906  */
+#line 185 "../climinalbuilder/climinalbuilder.y" /* yacc.c:1906  */
 
 
 extern FILE *yyin;
@@ -1640,7 +1641,9 @@ void yyerror(const char *s)
     printf("Parsing error at line %d: %s\n", yylineno, s);
 }
 
-int main(int argc, const char **argv)
+
+
+int main_bison(int argc, const char **argv)
 {
     if( argc == 3 )
     {

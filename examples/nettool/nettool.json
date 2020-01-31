@@ -1,0 +1,95 @@
+{
+    "context": {
+        "prompt": "main",
+        "command": {
+            "name": "shell",
+            "brief": "runs the OS shell",
+            "help": "Executes the SHELL command to run user default shell application",
+            "function": "shell_cbk"
+        },
+        "command": {
+            "name": "info",
+            "brief": "gives some basic System info",
+            "help": "Prints basic system and setup information",
+            "function": "info_cbk",
+            "param": {
+                "name": "system",
+                "description": "specific subsystem",
+                "required": "true",
+                "numval": "1",
+                "reqval": "true",
+                "values": "info_system_val_cbk"
+            },
+            "command": {
+                "name": "all",
+                "brief": "gives additional System info",
+                "help": "Prints system and setup information, including kernel that is being used",
+                "function": "info_all_cbk"
+            }
+        },
+        "command": {
+            "name": "credits",
+            "brief": "info on this program",
+            "help": "Type this if you want to know something more about the author",
+            "function": "credits_cbk"
+        },
+        "command": {
+            "name": "config",
+            "brief": "enters the configuration context",
+            "help": "Type this command to test multi-context",
+            "function": "config_cbk",
+            "context": {
+                "prompt": "config",
+                "command": {
+                    "name": "user", 
+                    "brief": "configures user properties",
+                    "help": "This command configures user properties",
+                    "function": "config_user_cbk"
+                },
+                "command": {
+                    "name": "net",
+                    "brief": "command to configure network",
+                    "help": "This command is used to configure network interfaces",
+                    "function": "config_net_cbk",
+                    "command": {
+                        "name": "ip",
+                        "brief": "command to configure network IP address", 
+                        "help": "This command is used to configure network IP address",
+                        "function": "config_net_ip_cbk"
+                    },
+                    "command": {
+                        "name": "interface",
+                        "brief": "sets the network interface to work on",
+                        "help": "This command is used to set network interface that will be used by all net commands",
+                        "function": "config_net_interface_cbk",
+                        "param": {
+                            "required": "false",
+                            "values": "config_net_interface_values"
+                        },
+                        "context": {
+                            "prompt": "interface",
+                            "command": {
+                                "name": "up",
+                                "brief": "brings UP the interface",
+                                "help": "This command enables the network interface",
+                                "function": "config_interface_up_cbk"
+                            },
+                            "command": {
+                                "name": "down",
+                                "brief": "puts DOWN the interface",
+                                "help": "This command disables the network interface",
+                                "function": "config_interface_down_cbk"
+                            }
+                        }
+                    },
+                    "command": {
+                        "name": "mask",
+                        "brief": "command to configure network IP nextmask",
+                        "help": "This command is used to configure network IP netmask",
+                        "function": "config_net_mask_cbk"
+                    }
+                }
+            }
+        }
+    }
+}

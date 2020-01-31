@@ -50,4 +50,13 @@ using std::stack;
 typedef stack<string> StackContexts;
 typedef list<string> ListCommands;
 
+
+#ifdef INCLUDE_BOOST
+#define MAIN_FUNC main_boost
+int main_boost(int argc, const char **argv);
+#else
+#define MAIN_FUNC main_bison
+int main_bison(int argc, const char **argv);
+#endif
+
 #endif

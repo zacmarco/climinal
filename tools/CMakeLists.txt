@@ -6,6 +6,18 @@ cmake_minimum_required(VERSION 2.8)
 project(climinal-tools)
 
 set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_CXX_STANDARD 11)
+#set(CMAKE_CXX_FLAGS "--std=c++11")
+
+# In case Boost is installed, we can use it to enable the advanced parser based on boost
+find_package(Boost 1.58.0)
+if(Boost_FOUND)
+  message("Boost library found, using next gen parser")
+  include_directories(${Boost_INCLUDE_DIRS})
+  add_compile_options(-DINCLUDE_BOOST)
+  #set(CMAKE_CXX_FLAGS $CMAKE_INSTALL_PREFIX" -DINCLUDE_BOOST_DEV")
+endif()
+
 
 # Now make sure that you the the build directory on your "Include" path when compiling
 include_directories(${PROJECT_SOURCE_DIR})
@@ -31,7 +43,7 @@ install(TARGETS climinalbuilder DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 #Debian Package generator
 SET(CPACK_GENERATOR "DEB")
 SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Marco Zaccheria")
-SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "CLIck tools")
+SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Climinal tools")
 
 SET(CPACK_PACKAGE_NAME "climinal-tools")
 SET(CPACK_PACKAGE_VERSION_MAJOR "1")

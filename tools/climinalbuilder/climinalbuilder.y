@@ -15,10 +15,11 @@
 #define BOOL2INT(str)   ( ( strcmp((const char*)str,"true") ) ? 0:1 )
 
 extern "C" int  yylex(void);
+
 void            yyerror(const char*);
 
-static char *values=NULL;
-static char *description=NULL;
+char *values=NULL;
+char *description=NULL;
 
 %}
 
@@ -193,7 +194,9 @@ void yyerror(const char *s)
     printf("Parsing error at line %d: %s\n", yylineno, s);
 }
 
-int main(int argc, const char **argv)
+
+
+int main_bison(int argc, const char **argv)
 {
     if( argc == 3 )
     {
