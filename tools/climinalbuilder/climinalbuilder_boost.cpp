@@ -136,6 +136,7 @@ int main_boost(int argc, const char **argv)
         //std::cerr << e.what() << std::endl;
     }
     if(err) {
+        err=0;
         try {
             ptree tree;
             //std::cout << "Trying xml..." << std::endl;
