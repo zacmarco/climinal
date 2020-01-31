@@ -125,29 +125,38 @@ namespace {
 int main_boost(int argc, const char **argv)
 {
     int err=0;
+    ptree tree;
     try {
-        ptree tree;
-        //std::cout << "Trying json..." << std::endl;
         read_json(argv[1], tree);
-        parse_file(tree);
-        write_files(argv[2]);
+        std::cout << "JSON file detected..." << std::endl;
     } catch (std::exception const& e) {
         err=1;
-        //std::cerr << e.what() << std::endl;
     }
     if(err) {
         err=0;
         try {
-            ptree tree;
-            //std::cout << "Trying xml..." << std::endl;
             read_xml(argv[1], tree);
+            std::cout << "XML file detected..." << std::endl;
+        } catch (std::exception const& e) {
+            err=1;
+        }
+        
+    }
+    if(!err) {
+        try {
             parse_file(tree);
             write_files(argv[2]);
         } catch (std::exception const& e) {
             err=1;
-            //std::cerr << e.what() << std::endl;
+            std::cerr << e.what() << std::endl;
         }
-        
+
+    } else {
+        std::cerr << "Not a valid XML or JSON file" << std::endl;
+    }
+
+    if(!err) {
+        std::cout << "DONE!" << std::endl;
     }
 
     return err;
