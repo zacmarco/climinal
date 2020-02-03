@@ -21,8 +21,6 @@
 #ifndef _TERMINAL_H_
 #define _TERMINAL_H_
 
-#include "config.h"
-
 #ifdef HAVE_TERMIOS_H
 #include <termios.h>
 #endif

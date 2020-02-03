@@ -24,8 +24,10 @@ ENDIF(HAVE_SYS_IOCTL_H)
 # Enable this for debug symbols
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -ggdb")
 
-configure_file ("${PROJECT_SOURCE_DIR}/cmake_config.h.in"
-                "${PROJECT_SOURCE_DIR}/config.h" )
+#configure_file ("${PROJECT_SOURCE_DIR}/cmake_config.h.in"
+#                "${PROJECT_SOURCE_DIR}/config.h" )
+
+
 # Now make sure that you the the build directory on your "Include" path when compiling
 include_directories(${PROJECT_SOURCE_DIR})
 
