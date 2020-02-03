@@ -18,16 +18,12 @@
    Boston, MA 02110-1301 USA
  */
 
-
-/* Reading the build configuration (only with autotools)*/
-#include "config.h"
-
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
 
 /* Check whether we need to include the ioctl.h in order to take the TIOCGWINSZ macro */
-#if( HAVE_SYS_IOCTL_H == 1 )
+#ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
 #define GWINSZ_IN_SYS_IOCTL  (1)
 #endif
@@ -452,7 +448,7 @@ static Chartype get_c_type( const char c, const Cliterm *term )
 int set_terminal( Cliterm *term )
 {
     int retVal = CLIMINAL_NO_ERROR;
-#if( HAVE_TERMIOS_H == 1 )
+#ifdef HAVE_TERMIOS_H
     struct termios temp_term;
 
     SET_AUTO_WRAP( term->out );
@@ -477,7 +473,7 @@ exit:
 int res_terminal( Cliterm *term )
 {
     int retVal = CLIMINAL_NO_ERROR;
-#if( HAVE_TERMIOS_H == 1 )
+#ifdef HAVE_TERMIOS_H
     retVal = tcsetattr( fileno(term->in), TCSANOW, &term->term_io );
 #endif
     return retVal;

@@ -4,6 +4,7 @@ cmake/CPackConfig.cmake
 cmake/CPackSourceConfig.cmake
 cmake/IMMEDIATE
 cmake/Makefile
+cmake/compile_commands.json
 cmake/_CPack_Packages/
 cmake/cmake_install.cmake
 cmake/install_manifest.txt
@@ -30,4 +31,3 @@ tools/cmake/climinal-tools-1.0.0_amd64.deb
 tools/cmake/climinalbuilder
 tools/cmake/cmake_install.cmake
 tools/cmake/install_manifest.txt
-
