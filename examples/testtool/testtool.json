@@ -1,0 +1,96 @@
+{
+    "context": {
+        "prompt": "ct0",
+        "command": {
+            "name": "c0_a",
+            "brief": "c0_a",
+            "help": "Command 0_a",
+            "function": "cbk"
+        },
+        "command": {
+            "name": "c0_b",
+            "brief": "c0_b",
+            "help": "Command 0_b",
+            "function": "cbk",
+            "param": {
+                "required": "true"
+            },
+            "param": {
+                "name": "p0_b_1",
+                "required": "true",
+                "numval": "1",
+                "reqval": "true",
+                "values": "values_cbk"
+            },
+            "param": {
+                "name": "p0_b_2",
+                "required": "false",
+                "numval": "2",
+                "reqval": "true"
+            },
+            "param": {
+                "name": "p0_b_3",
+                "required": "false",
+                "numval": "1",
+                "reqval": "false"
+            },
+            "param": {
+                "name": "p0_b_4",
+                "required": "false",
+                "numval": "3",
+                "reqval": "false"
+            }
+        },
+        "command": {
+            "name": "c0_c",
+            "brief": "c0_c",
+            "help": "Command 0_c",
+            "function": "cbk",
+            "command": {
+                "name": "c0_c_a",
+                "brief": "c0_c_a",
+                "help": "Command 0_c_a",
+                "function": "cbk",
+                "param": {
+                    "name": "p0_b_1",
+                    "required": "true",
+                    "numval": "1",
+                    "reqval": "true"
+                },
+                "param": {
+                    "name": "p0_b_2",
+                    "required": "false",
+                    "numval": "2",
+                    "reqval": "true"
+                },
+                    "param": {
+                    "name": "p0_b_3",
+                    "required": "false",
+                    "numval": "1",
+                    "reqval": "false"
+                },
+                    "param": {
+                    "name": "p0_b_4",
+                    "required": "false",
+                    "numval": "3",
+                    "reqval": "false"
+                }
+            }
+        },
+        "command": {
+            "name": "c0_d",
+            "brief": "c0_d",
+            "help": "Command 0_d",
+            "function": "cbk",
+            "context": {
+                "prompt": "ct1",
+                "command": {
+                    "name": "c1_a",
+                    "brief": "c1_a",
+                    "help": "Command 1_a",
+                    "function": "cbk"
+                }
+            }
+        }
+    }
+}
