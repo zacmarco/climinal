@@ -48,22 +48,22 @@
             <help>"Command 0_c_a"</help>
             <function>cbk</function>
             <param>
-                <name>p0_b_1</name>
+                <name>p0_c_1</name>
                 <required>true</required>
                 <numval>1</numval>
             </param>
             <param>
-                <name>p0_b_2</name>
+                <name>p0_c_2</name>
                 <required>false</required>
                 <numval>2</numval>
             </param>
                 <param>
-                <name>p0_b_3</name>
+                <name>p0_c_3</name>
                 <required>false</required>
                 <numval>1</numval>
             </param>
                 <param>
-                <name>p0_b_4</name>
+                <name>p0_c_4</name>
                 <required>false</required>
                 <numval>3</numval>
             </param>

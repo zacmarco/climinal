@@ -1,0 +1,24 @@
+?c0	a		?
+c0	b		1	
+[A?v1
+[A d1
+[A p0	2	
+[Av2
+[A v3
+[A 	3		
+[A[D[D[D[D[D[D[Dv4 
+[Av5 v6
+[A v7
+c0	c	?
+[Ac	?p0	1 v1
+[A
+[A v1 p0	2	
+[Av2
+[A v3
+[A p	3	v4
+[A 	v5 v6
+[A v7
+?c0	d	?
+?c1	?
+[Aexi	
+by	

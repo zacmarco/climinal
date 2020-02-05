@@ -48,22 +48,22 @@
                 "help": "Command 0_c_a",
                 "function": "cbk",
                 "param": {
-                    "name": "p0_b_1",
+                    "name": "p0_c_1",
                     "required": "true",
                     "numval": "1"
                 },
                 "param": {
-                    "name": "p0_b_2",
+                    "name": "p0_c_2",
                     "required": "false",
                     "numval": "2"
                 },
                     "param": {
-                    "name": "p0_b_3",
+                    "name": "p0_c_3",
                     "required": "false",
                     "numval": "1"
                 },
                     "param": {
-                    "name": "p0_b_4",
+                    "name": "p0_c_4",
                     "required": "false",
                     "numval": "3"                }
             }
