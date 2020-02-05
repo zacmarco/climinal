@@ -8,6 +8,15 @@
 #include <termios.h>
 #include "testtool.h"
 
+#ifndef __off_t_defined
+# ifndef __USE_FILE_OFFSET64
+typedef __off_t off_t;
+# else
+typedef __off64_t off_t;
+# endif
+# define __off_t_defined
+#endif 
+
 static FILE *outfile=NULL;
 
 ssize_t mywrite(void *c, const char *buf, size_t size)
