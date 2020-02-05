@@ -8,6 +8,7 @@
 #include <termios.h>
 #include "testtool.h"
 
+#if __linux
 static FILE *outfile=NULL;
 
 ssize_t mywrite(void *c, const char *buf, size_t size)
@@ -94,3 +95,9 @@ int main(int argc, const char **argv)
     return 0;
 }
 
+#else
+int main()
+{
+    return climinal_main(in,out,getmaincontext_testtool());  
+}
+#endif
