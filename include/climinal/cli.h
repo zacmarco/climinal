@@ -78,7 +78,6 @@ extern "C"
         char            *description;
         unsigned int    required;
         unsigned int    numval;
-        unsigned int    reqval;
         Valcbk          val;
     };
 

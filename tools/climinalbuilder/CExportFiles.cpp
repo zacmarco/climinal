@@ -598,7 +598,7 @@ void CExportFiles::WriteParametersRules(const MapCommands* mc,const string* sCtx
       string sNewCmdName = (sCmdName) ? *sCmdName + separator + itcmd->first : itcmd->first; 
 
       *oss << "static Cliparam " << *getPrmDefName(sCtxName,&sNewCmdName) << "[] = \n{\n";
-      *oss << "\t\t /*NAME\tDESC\tREQUIRED\tMINVAL\tMAXVAL\tVALUES\t*/\n";
+      *oss << "\t\t /*NAME\tDESC\tREQUIRED\tNUMVAL\tVALUES\t*/\n";
   
       if(itcmd->second->HasDefaultParameter()) //check to write default parameter as first row in .c file
       {
@@ -652,7 +652,6 @@ void CExportFiles::WriteParameterLine(const ListParameters::iterator lpIter)
 
   *oss << (*lpIter)->getRequired() << ",\t";
   *oss << (*lpIter)->getNumVal() << ",\t";
-  *oss << (*lpIter)->getReqVal() << ",\t";
   if(((*lpIter)->getValues())->length() > 0 )
   {
     *oss << *((*lpIter)->getValues()) << "},";

@@ -39,7 +39,6 @@ char *description=NULL;
         FUNCTION
         PROMPT
         NUMVAL
-        REQVAL
         DESCRIPTION
         VALUES
         STR
@@ -52,7 +51,6 @@ char *description=NULL;
         ENDFUNCTION
         ENDREQUIRED
         ENDNUMVAL
-        ENDREQVAL
         ENDDESCRIPTION
         ENDVALUES
         ENDPROMPT
@@ -134,10 +132,10 @@ params:
         | params param
         ;
 param:
-        PAR NAME TXT ENDNAME param_description REQUIRED BOOL ENDREQUIRED NUMVAL NUM ENDNUMVAL REQVAL BOOL ENDREQVAL param_values ENDPAR 
+        PAR NAME TXT ENDNAME param_description REQUIRED BOOL ENDREQUIRED NUMVAL NUM ENDNUMVAL param_values ENDPAR 
         {                                                           
             int ret;
-            ret = create_param( (const char*)$3, (const char*)description, atoi($7), atoi($10), atoi($13), values );           
+            ret = create_param( (const char*)$3, (const char*)description, atoi($7), atoi($10), values );           
             //printf("Create param:%s, return:%d\n", $3, ret);
             FREE($3);
             end_param();
@@ -154,7 +152,7 @@ param:
         PAR REQUIRED BOOL ENDREQUIRED param_values ENDPAR
         {
             int ret;
-            ret = create_param( NULL, NULL, atoi($3), 1, 1, values );
+            ret = create_param( NULL, NULL, atoi($3), 1, values );
             //printf("Create def param, return:%d\n", ret);
             end_param();
             if(values) {

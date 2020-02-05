@@ -38,7 +38,7 @@ You can create a param:
  - if incoming parameter has a father command
  - if there isn't a parameter with the same name for father command
 */
-int create_param ( const char *name, const char *description, const int required , const int numval, const int reqval, const char *values)
+int create_param ( const char *name, const char *description, const int required , const int numval, const char *values)
 {
   if(!cli)
   {
@@ -88,7 +88,6 @@ int create_param ( const char *name, const char *description, const int required
     cp->setDescription(description);
   cp->setRequired(required);
   cp->setNumVal(numval);
-  cp->setReqVal(reqval);
   if(values) 
   {
     cp->setValues(values);

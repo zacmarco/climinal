@@ -19,26 +19,22 @@
             <name>p0_b_1</name>
             <required>true</required>
             <numval>1</numval>
-            <reqval>true</reqval>
             <values>values_cbk</values>
         </param>
         <param>
             <name>p0_b_2</name>
             <required>false</required>
             <numval>2</numval>
-            <reqval>true</reqval>
         </param>
         <param>
             <name>p0_b_3</name>
             <required>false</required>
             <numval>1</numval>
-            <reqval>false</reqval>
         </param>
         <param>
             <name>p0_b_4</name>
             <required>false</required>
             <numval>3</numval>
-            <reqval>false</reqval>
         </param>
     </command>
     <command>
@@ -55,25 +51,21 @@
                 <name>p0_b_1</name>
                 <required>true</required>
                 <numval>1</numval>
-                <reqval>true</reqval>
             </param>
             <param>
                 <name>p0_b_2</name>
                 <required>false</required>
                 <numval>2</numval>
-                <reqval>true</reqval>
             </param>
                 <param>
                 <name>p0_b_3</name>
                 <required>false</required>
                 <numval>1</numval>
-                <reqval>false</reqval>
             </param>
                 <param>
                 <name>p0_b_4</name>
                 <required>false</required>
                 <numval>3</numval>
-                <reqval>false</reqval>
             </param>
         </command>
     </command>

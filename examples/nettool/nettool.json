@@ -17,7 +17,6 @@
                 "description": "specific subsystem",
                 "required": "true",
                 "numval": "1",
-                "reqval": "true",
                 "values": "info_system_val_cbk"
             },
             "command": {

@@ -19,26 +19,22 @@
                 "name": "p0_b_1",
                 "required": "true",
                 "numval": "1",
-                "reqval": "true",
                 "values": "values_cbk"
             },
             "param": {
                 "name": "p0_b_2",
                 "required": "false",
-                "numval": "2",
-                "reqval": "true"
+                "numval": "2"
             },
             "param": {
                 "name": "p0_b_3",
                 "required": "false",
-                "numval": "1",
-                "reqval": "false"
+                "numval": "1"
             },
             "param": {
                 "name": "p0_b_4",
                 "required": "false",
-                "numval": "3",
-                "reqval": "false"
+                "numval": "3"
             }
         },
         "command": {
@@ -54,27 +50,22 @@
                 "param": {
                     "name": "p0_b_1",
                     "required": "true",
-                    "numval": "1",
-                    "reqval": "true"
+                    "numval": "1"
                 },
                 "param": {
                     "name": "p0_b_2",
                     "required": "false",
-                    "numval": "2",
-                    "reqval": "true"
+                    "numval": "2"
                 },
                     "param": {
                     "name": "p0_b_3",
                     "required": "false",
-                    "numval": "1",
-                    "reqval": "false"
+                    "numval": "1"
                 },
                     "param": {
                     "name": "p0_b_4",
                     "required": "false",
-                    "numval": "3",
-                    "reqval": "false"
-                }
+                    "numval": "3"                }
             }
         },
         "command": {

@@ -38,8 +38,7 @@
 #define CR_PAR_DUPLICATED_PAR_IN_CMD      -10004  //Father command has another parameter with the same name
 #define CR_PAR_UNABLE_TO_FIND_RELATED_CMD -10005  //Unable to associate this parameter to a SUBcommand
 #define CR_PAR_DEFAULT_PAR_ALREADY_EXISTS -10006  //Father command already has a default parameter
-#define CR_PAR_MAXVAL_SMALLER_THAN_MINVAL -10007  //(maxval < minval)
-#define CR_PAR_HAS_SAME_NAME_OF_A_SUBCMD  -10008  //incoming parameter has the same name of a subcommand!
+#define CR_PAR_HAS_SAME_NAME_OF_A_SUBCMD  -10007  //incoming parameter has the same name of a subcommand!
 
 
 //end_param errors (-15000)

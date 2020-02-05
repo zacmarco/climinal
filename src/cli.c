@@ -738,7 +738,7 @@ static void printusage( Clisession *session, Clicmd *cmd )
             }
             else
             {
-                fprintf( session->term.out, " < %svalues=%u %s >\n", (param->required) ? "required, ":"", param->numval, (param->reqval) ? "(required)":"" );
+                fprintf( session->term.out, " < %svalues=%u >\n", (param->required) ? "required, ":"", param->numval );
             }
             
             param = &(cmd->param[++count]);
@@ -904,13 +904,10 @@ static Cmdinfo *createcmdinfo( const Clisession *session, const Clicmd *cmd, cha
 
                         if( (param->name[0] != '\0') && (valnum < param->numval) )
                         {
-                            if(param->reqval)
-                            {
-                                fprintf( session->term.out, ">> MISSING VALUE FOR PARAMETER \"%s\"\n", param->name );
-                                destroycmdinfo( cmdinfo );
-                                cmdinfo = NULL;
-                                goto exit;
-                            }
+                            fprintf( session->term.out, ">> MISSING VALUE FOR PARAMETER \"%s\"\n", param->name );
+                            destroycmdinfo( cmdinfo );
+                            cmdinfo = NULL;
+                            goto exit;
                         }
                         ++(cmdinfo->paramnum);
                     }

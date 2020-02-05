@@ -16,7 +16,6 @@
             <description>"specific subsystem"</description>
             <required>true</required>
             <numval>1</numval>
-            <reqval>true</reqval>
             <values>info_system_val_cbk</values>
         </param>
         <command>

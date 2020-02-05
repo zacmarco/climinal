@@ -23,7 +23,7 @@
 #define _CLISTRUCT_H_
 
 //EXPORTED
-int create_param   ( const char *name, const char* description, const int required , const int numval, const int reqval, const char *values);
+int create_param   ( const char *name, const char* description, const int required , const int numval, const char *values);
 int create_command ( const char *name, const char *brief, const char *help, const char *callback );
 int create_context ( const char *prompt );
 int end_param      (void);

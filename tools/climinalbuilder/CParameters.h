@@ -48,9 +48,6 @@ public:
   inline int getNumVal() const{return this->numval;};
   inline void setNumVal(const int val) {this->numval = val;};
 
-  inline int getReqVal() const {return this->reqval;};
-  inline void setReqVal(const int val) {this->reqval = val;};
-
   bool isValuesNull() const{return values->length() == 0;};
   inline string* getValues() const {return this->values;};
   inline void setValues(const string& val) {*this->values = val;};
@@ -60,7 +57,6 @@ private:
   string *description;
   int required;
   int numval;
-  int reqval;
   string *values;
 
 };

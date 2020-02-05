@@ -19,7 +19,7 @@ namespace {
 
     void parse_param(ptree &param)
     {
-        std::string name, description, required, numval, reqval, values;
+        std::string name, description, required, numval, values;
         try {
             name=param.get_child("name").get_value<std::string>();
         } catch (std::exception const& e) {}
@@ -34,9 +34,6 @@ namespace {
             numval=param.get_child("numval").get_value<std::string>();
         } catch (std::exception const& e) {}
         try {
-            reqval=param.get_child("reqval").get_value<std::string>();
-        } catch (std::exception const& e) {}
-        try {
             values=param.get_child("values").get_value<std::string>();
         } catch (std::exception const& e) {}
 
@@ -45,10 +42,9 @@ namespace {
         //std::cout << "DESCRIPTION: "  << description << std::endl;
         //std::cout << "REQUIRED:    "  << required << std::endl;
         //std::cout << "NUMVAL:      "  << numval << std::endl;
-        //std::cout << "REQVAL:      "  << reqval << std::endl;
         //std::cout << "VALUES:      "  << values << std::endl;
         //std::cout << std::endl; 
-        create_param((name.length())?name.c_str():NULL, (description.length())?description.c_str():NULL, (required=="true")?1:0, (numval.length())?std::stoi(numval):1, (reqval=="false")?0:1, (values.length())?values.c_str():NULL);
+        create_param((name.length())?name.c_str():NULL, (description.length())?description.c_str():NULL, (required=="true")?1:0, (numval.length())?std::stoi(numval):1, (values.length())?values.c_str():NULL);
 
         //std::cout << "END PARAM: " << name << std::endl; 
         end_param();
