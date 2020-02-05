@@ -8,15 +8,6 @@
 #include <termios.h>
 #include "testtool.h"
 
-#ifndef __off_t_defined
-# ifndef __USE_FILE_OFFSET64
-typedef __off_t off_t;
-# else
-typedef __off64_t off_t;
-# endif
-# define __off_t_defined
-#endif 
-
 static FILE *outfile=NULL;
 
 ssize_t mywrite(void *c, const char *buf, size_t size)
@@ -40,7 +31,7 @@ ssize_t myread(void *c, char *buf, size_t size)
 }
 
 
-int myseek(void *c, off64_t *offset, int whence)
+int myseek(void *c, off_t *offset, int whence)
 {
     return (int)lseek(fileno(c), *offset, whence);
     return 0;
