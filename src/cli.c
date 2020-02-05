@@ -605,7 +605,7 @@ static int parseline( Clisession *session )
 
                     hist=&(session->term.history);
                     num=strtol( &(main_cmd[1]), NULL, 10 );
-                    if( num<=0 || (num >= hist->cmdnum) || (hist->cmdnum>HISTORY_SIZE && num<(hist->cmdnum-HISTORY_SIZE)) ) {
+                    if( num<=0 || (num >= (hist->cmdnum-1)) || (hist->cmdnum>HISTORY_SIZE && num<(hist->cmdnum-HISTORY_SIZE)) ) {
                         fprintf(session->term.out, ">>COMMAND NUMBER %u NOT AVAILABLE\n", num);
                         return CLIMINAL_NO_ERROR;
                     }
