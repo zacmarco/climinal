@@ -18,7 +18,7 @@
             "param": {
                 "name": "p0_b_1",
                 "required": "true",
-                "numval": "1",
+                "numval": "2",
                 "values": "values_cbk"
             },
             "param": {

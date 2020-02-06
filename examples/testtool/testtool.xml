@@ -18,7 +18,7 @@
         <param>
             <name>p0_b_1</name>
             <required>true</required>
-            <numval>1</numval>
+            <numval>2</numval>
             <values>values_cbk</values>
         </param>
         <param>

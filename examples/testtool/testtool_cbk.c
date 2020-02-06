@@ -23,7 +23,9 @@ int cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line)
 
 int values_cbk(char **val, const char *cookie)
 {
-    *val=NULL;
-    return 0;
+    int count=0;
+    val[count++]=strdup("val1");
+    val[count++]=strdup("val2");
+    return count;
 }
 

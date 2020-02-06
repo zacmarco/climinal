@@ -26,9 +26,10 @@
 #include "climinal/session.h"
 
 
-static Cmdinfo      *createcmdinfo  ( const Clisession *session, const Clicmd *cmd, char *next_data );
-static void         destroycmdinfo  ( Cmdinfo *cmdinfo );
-static void         dump_history    ( const Clisession *session );
+static Cmdinfo *createcmdinfo  ( const Clisession *session, const Clicmd *cmd, char *next_data );
+static void    destroycmdinfo  ( Cmdinfo *cmdinfo );
+static void    dump_history    ( const Clisession *session );
+static int     word_distance   ( const char *start, const char *current, const char*endbuf );
 
 /* This function returns the address of next word in a buffer, giving also as output the strlen of the word */
 static char *next_word( const char *in, const char *in_end, unsigned int *len )
@@ -440,7 +441,7 @@ static char **completion_matches( Clisession *session, const char *text, unsigne
         /* Potential matches */
         int p_matches=0, count;
         char *p_val[MAX_NUM_COMPL_ENTRIES];
-        unsigned int len, i;
+        unsigned int len=0, i;
         last=last_word(session->term.buffer, session->term.buffer+session->term.pos, &len);
         strncpy(word, last, len);
         word[len]='\0';
@@ -456,9 +457,12 @@ static char **completion_matches( Clisession *session, const char *text, unsigne
         Cliparam *param=session->active_cmd->param;
         while( (param->name) && (!p_matches) ) {
             if( strlen(param->name)>0 ) {
-                if( (!strcmp(param->name, word)) && (param->val)) {
+                char *param_in_buf=strstr(session->term.buffer, param->name);
+                if( param_in_buf &&/*(!strcmp(param->name, word)) &&*/ 
+                    (param->val) &&
+                    (word_distance(param_in_buf, &(session->term.buffer[session->term.pos]), &(session->term.buffer[MAX_BUFLEN])) <= param->numval) ) {
 
-                    /* Let's call customer callback */
+                    /* Let's call custom callback */
                     p_matches=param->val(p_val, word_to_complete);
                 }
             } 
@@ -567,6 +571,49 @@ static int parsecommon( Clisession *session, const char *main_cmd )
         retval = CLIMINAL_E_NOT_FOUND;
     }
     return retval;
+}
+
+/* Calculates the distance in terms of number of words between the two pointers */
+/* start: pointer to the left word in buffer */
+/* current: pointer to the current (right) word in buffer */
+static int word_distance( const char *start, const char *current, const char *endbuf ) 
+{
+    int negative;
+    char *left, *right, *curr, *next;
+    int count=0;
+    unsigned int len;
+
+    if( start<current ) {
+        left=(char*)start;
+        right=(char*)current;
+        negative=0;
+    } else {
+        left=(char*)current;
+        right=(char*)start;
+        negative=1;
+    }
+
+    next=left;
+    next_word(next, endbuf, &len);
+
+    do{
+        curr=next;
+        next=next_word(curr+len, endbuf, &len);
+        //printf("\nCURR:%X NEXT:%X RIGHT:%X ENDBUF:%X\n", curr, next, right, endbuf);
+        if((next+len)<right) {
+            count++;
+        }
+        //printf("left: %16X, right: %16X, curr: %16X\n", left, right, curr);
+        //printf("STRING: %s\n", left);
+    } while( (next) && (next<right) && (curr<next) );
+
+    if(negative) {
+        count=-count;
+    }
+
+    //printf("COUNT: %d\n", count);
+    return count;
+
 }
 
 static int parseline( Clisession *session )
