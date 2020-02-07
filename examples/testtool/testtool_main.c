@@ -98,6 +98,6 @@ int main(int argc, const char **argv)
 #else
 int main()
 {
-    return climinal_main(stdin,stdout,getmaincontext_testtool());  
+    return climinal_main(stdin,stdout,getmaincontext_testtool(), NULL);  
 }
 #endif
