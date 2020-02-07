@@ -1,0 +1,11 @@
+{
+    "context": {
+        "prompt": "cpp",
+        "command": {
+            "name": "test",
+            "brief": "Test command",
+            "help": "This is just a test command",
+            "function": "test_cbk"
+        }
+    }
+}

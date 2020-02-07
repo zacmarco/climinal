@@ -1,0 +1,33 @@
+CLIMINAL EXAMPLE
+***********
+
+This directory contains a sample CLI implementation,
+just to show how to use CLIMINAL in a c++ project.
+C++ threads are also used to show how to use the cookie parameter in a multi-thread environment.
+
+Files in this directory are:
+
+ - cpp.xml : main JSON file that contains the CLI structure
+ - cpp_cbk.cpp : C++ file containing the command callbacks implementation
+ - cpp_main.cpp : C++ file that just implements the main() function
+ - README : this file ;)
+
+In order to build this fully working example, please run the following commands,
+after installing CLIMINAL libraries and tools
+
+
+
+ my-linux-box$ climinalbuilder cpp.json cpp
+ my-linux-box$ gcc -c *.c 
+ my-linux-box$ g++ -c *.cpp
+ my-linux-box$ g++ -o cpp *.o -lcliminal -lpthread -lm
+
+
+
+Now you're ready to run the sample CLI application:
+
+my-linux-box$ ./cpp
+
+ENJOY
+
+  Zac
