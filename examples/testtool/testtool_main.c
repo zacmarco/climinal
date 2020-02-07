@@ -77,7 +77,7 @@ int main(int argc, const char **argv)
         tcsetattr(fileno(in), TCSANOW, &newt);
         tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 
-        ret=climinal_main(in,out,getmaincontext_testtool());  
+        ret=climinal_main(in,out,getmaincontext_testtool(), NULL);  
 
         tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
         tcsetattr(fileno(in), TCSANOW, &oldt);

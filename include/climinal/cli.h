@@ -40,10 +40,10 @@ extern "C"
     typedef struct Cmdparam Cmdparam;
 
     /* This is the definition of the user callback to be registered */
-    typedef int (*Clicbk)(FILE *in, FILE *out, const Cmdinfo *cmdinfo, const char *cmd);
+    typedef int (*Clicbk)(FILE *in, FILE *out, const Cmdinfo *cmdinfo, const char *cmd, void *cookie);
 
     /* This is the definition of the user callback to complete values at runtime */
-    typedef int (*Valcbk)(char **val, const char *cookie);
+    typedef int (*Valcbk)(char **val, void *cookie);
 
     typedef struct Clicmd       Clicmd;
     typedef struct Cliparam     Cliparam;
@@ -63,7 +63,7 @@ extern "C"
 
 
     /* The main CLI entry point */
-    int climinal_main(const FILE *in, FILE *out, Clicontext *maincontext);
+    int climinal_main(const FILE *in, FILE *out, Clicontext *maincontext, void *cookie);
 
 
     /***********************************************************************************

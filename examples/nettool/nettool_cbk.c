@@ -5,16 +5,10 @@
 #include <ifaddrs.h>
 
 #include "nettool.h"
+#include "nettool_common.h"
 
-typedef struct priv_data_S
-{
-    char ifname[32];
-}
-priv_data_t;
 
-static priv_data_t priv_data = {0};
-
-int shell_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line)
+int shell_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line, void *cookie)
 {
     char cmd[256];
     if( CLIMINAL_GET_DEFVAL(info) )
@@ -27,7 +21,7 @@ int shell_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line)
     return CLIMINAL_NO_ERROR;
 }
 
-int info_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line)
+int info_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line, void *cookie)
 {
     Cmdparam *param=findparam(info, "system");
     if(!strcmp(param->value[0], "os"))
@@ -41,25 +35,25 @@ int info_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line)
     return CLIMINAL_NO_ERROR;
 }
 
-int info_all_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line)
+int info_all_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line, void *cookie)
 {
     fprintf(out,"System info:\n");
     system("uname -a ; lspci");
     return CLIMINAL_NO_ERROR;
 }
 
-int config_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line)
+int config_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line, void *cookie)
 {
     return CLIMINAL_NO_ERROR;
 }
 
-int config_net_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line)
+int config_net_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line, void *cookie)
 {
     fprintf(out, "Please select one of the possible subcommands\n");
     return CLIMINAL_E_INVALID;
 }
 
-int config_net_interface_values(char **val, const char *cookie) {
+int config_net_interface_values(char **val, void *cookie) {
     struct ifaddrs *ifaddr, *ifa;
     int n;
 
@@ -85,12 +79,13 @@ int config_net_interface_values(char **val, const char *cookie) {
     return n;
 }
 
-int config_net_interface_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line)
+int config_net_interface_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line, void *cookie)
 {
     struct ifaddrs *ifaddr, *ifa;
     int found=0;
     char *val;
     int err=CLIMINAL_NO_ERROR;
+    priv_data_t *priv_data=(priv_data_t*)cookie;
 
     val=CLIMINAL_GET_DEFVAL(info);
 
@@ -113,16 +108,16 @@ int config_net_interface_cbk(FILE* in, FILE* out, const Cmdinfo *info, const cha
         freeifaddrs(ifaddr);
 
         if( found ) {
-            strcpy(priv_data.ifname, val);
-            fprintf( out, "Current interface: \"%s\"\n", priv_data.ifname );
+            strcpy(priv_data->ifname, val);
+            fprintf( out, "Current interface: \"%s\"\n", priv_data->ifname );
         } else {
             fprintf( out, "Interface \'%s\' not found\n", val );
             err=CLIMINAL_E_NOT_FOUND;
             goto exit;
         }
     } else {
-        if( strlen(priv_data.ifname) > 0 ) {
-            fprintf( out, "Current interface: \"%s\"\n", priv_data.ifname );
+        if( strlen(priv_data->ifname) > 0 ) {
+            fprintf( out, "Current interface: \"%s\"\n", priv_data->ifname );
             err=CLIMINAL_E_GENERIC;
             goto exit;
         } else {
@@ -135,16 +130,17 @@ exit:
     return err;
 }
 
-int config_net_ip_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line)
+int config_net_ip_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line, void *cookie)
 {
     char command[256];
-    sprintf(command, "sudo ifconfig %s %s", priv_data.ifname, info->defval);
+    priv_data_t *priv_data=(priv_data_t*)cookie;
+    sprintf(command, "sudo ifconfig %s %s", priv_data->ifname, info->defval);
     fprintf(out, "executing -- %s\n", command);
     system(command);
     return CLIMINAL_NO_ERROR;
 }
 
-int config_net_mask_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line)
+int config_net_mask_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line, void *cookie)
 {
     char command[256];
     sprintf(command, "sudo ifconfig eth0 netmask %s", info->defval);
@@ -153,7 +149,7 @@ int config_net_mask_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* li
     return CLIMINAL_NO_ERROR;
 }
 
-int config_user_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line)
+int config_user_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line, void *cookie)
 {
     char command[256];
     sprintf(command, "su - %s", info->defval);
@@ -162,23 +158,23 @@ int config_user_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line)
     return CLIMINAL_NO_ERROR;
 }
 
-int credits_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line)
+int credits_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line, void *cookie)
 {
     fprintf(out, "Not much to say:\n - Marco Zac (zacmarco@gmail.com)\n\nENJOY!!!\n");
     return CLIMINAL_NO_ERROR;
 }
 
-int config_interface_up_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line)
+int config_interface_up_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line, void *cookie)
 {
     return CLIMINAL_NO_ERROR;
 }
 
-int config_interface_down_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line)
+int config_interface_down_cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line, void *cookie)
 {
     return CLIMINAL_NO_ERROR;
 }
 
-int info_system_val_cbk(char **val, const char *cookie) {
+int info_system_val_cbk(char **val, void *cookie) {
     int i=0;
     val[i++]=strdup("os");
     val[i++]=strdup("hw");

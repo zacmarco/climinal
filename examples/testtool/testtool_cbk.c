@@ -2,7 +2,7 @@
 #include <string.h>
 #include "testtool.h"
 
-int cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line)
+int cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line, void *cookie)
 {
     int param, val;
 
@@ -21,7 +21,7 @@ int cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line)
     return CLIMINAL_NO_ERROR;
 }
 
-int values_cbk(char **val, const char *cookie)
+int values_cbk(char **val, void *cookie)
 {
     int count=0;
     val[count++]=strdup("val1");

@@ -355,7 +355,7 @@ void CExportFiles::WriteValuesCallbackRules(const MapCommands* mc)
             {
                 if( (*(*itpar)->getValues()).length() > 0 )
                 {
-                    *oss << "int " << (*(*itpar)->getValues()) << "(char **val, const char *cookie);\n";
+                    *oss << "int " << (*(*itpar)->getValues()) << "(char **val, void *cookie);\n";
                 }
             }
         }
@@ -573,7 +573,7 @@ void CExportFiles::WriteCallbackRules(const MapCommands* mc,const string* sCtxNa
       *oss << "/* COMMAND: " << itcmd->first << "\t\t( " << s << " )\t\t*/\n";
 
       //obtain COMMAND's CALLBACK NAME
-      *oss << "int " << *itcmd->second->getCallbackPtr() << "(FILE* in, FILE* out, const Cmdinfo *info, const char* line);\n\n";
+      *oss << "int " << *itcmd->second->getCallbackPtr() << "(FILE* in, FILE* out, const Cmdinfo *info, const char* line, void *cookie);\n\n";
     }
 
     if(itcmd->second->HasSubCommands())

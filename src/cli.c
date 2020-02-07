@@ -147,7 +147,7 @@ static inline int execute( const Clisession *session, const Clicmd *cmd, const c
                 res_terminal( (Cliterm*) &session->term );
                 
                 /* All OK... let's execute the callback! */
-                retval = cmd->cbk(session->term.in, session->term.out, cmdinfo, line);
+                retval = cmd->cbk(session->term.in, session->term.out, cmdinfo, line, session->cookie);
 
                 /* Set back terminal to interactive mode */
                 set_terminal( (Cliterm*) &session->term );
@@ -463,7 +463,7 @@ static char **completion_matches( Clisession *session, const char *text, unsigne
                     (word_distance(param_in_buf, &(session->term.buffer[session->term.pos]), &(session->term.buffer[MAX_BUFLEN])) <= param->numval) ) {
 
                     /* Let's call custom callback */
-                    p_matches=param->val(p_val, word_to_complete);
+                    p_matches=param->val(p_val, session->cookie);
                 }
             } 
             param++;
@@ -475,7 +475,7 @@ static char **completion_matches( Clisession *session, const char *text, unsigne
             while( (param->name) && (!p_matches) ) {
                 if( (strlen(param->name)==0) && (param->val) ) {
                     /* Let's call customer callback */
-                    p_matches=param->val(p_val, word_to_complete);
+                    p_matches=param->val(p_val, session->cookie);
                 } 
                 param++;
             } 
@@ -698,7 +698,7 @@ exit:
     return retval;
 }
 
-int climinal_main(const FILE *in, FILE *out, Clicontext *maincontext)
+int climinal_main(const FILE *in, FILE *out, Clicontext *maincontext, void *cookie)
 {
     int exit = CLIMINAL_NO_ERROR;
     Clisession *session=malloc(sizeof(Clisession));
@@ -706,7 +706,7 @@ int climinal_main(const FILE *in, FILE *out, Clicontext *maincontext)
     if(!session)
         return 1;
 
-    initsession( session, maincontext, in, out );
+    initsession( session, maincontext, in, out, cookie );
     setcompleter( session, completion );
 
     /* Adding an extra empty line to be used as a separator */

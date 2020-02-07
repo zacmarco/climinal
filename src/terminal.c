@@ -646,10 +646,11 @@ void setcompleter( Clisession *session, Clicompleter completer )
 }
 
 
-void initsession( Clisession *session, Clicontext *context, const FILE *in, const FILE *out )
+void initsession( Clisession *session, Clicontext *context, const FILE *in, const FILE *out, void *cookie )
 {
     session->term.in  = (FILE*) ( (in)  ? in    : stdin   );
     session->term.out = (FILE*) ( (out) ? out   : stdout  );
+    session->cookie   = cookie;
 
     init_history( &(session->term.history) );
     set_terminal( &(session->term) );

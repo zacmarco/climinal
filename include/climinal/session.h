@@ -36,7 +36,7 @@ extern "C"
     typedef struct Clisession   Clisession;
     typedef char                **(*Clicompleter)(Clisession*,const char*,int,int);
 
-    void    initsession     ( Clisession *session, Clicontext *main, const FILE *in, const FILE *out );
+    void    initsession     ( Clisession *session, Clicontext *main, const FILE *in, const FILE *out, void *cookie );
     int     readline        ( Clisession *session, const char *prompt );
     void    setcompleter    ( Clisession *session, Clicompleter );
     void    printhelp       ( Clisession *session );
@@ -47,6 +47,7 @@ extern "C"
         Clicmd          *active_cmd;
         Clicontext      *active_context;
         Clicontext      *main_context;
+        void            *cookie;
 
         char            prompt [MAX_STRLEN];
 

@@ -2,9 +2,13 @@
 #include <string.h>
 #include "flat.h"
 
-int cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line)
+int cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line, void *cookie)
 {
     int param, val;
+
+    if(cookie) {
+        fprintf(out, "Cookie: %s\n", (char*)cookie);
+    }
 
     fprintf(out, "Full command line: \"%s\"\n", line);
 
