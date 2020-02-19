@@ -99,6 +99,8 @@ int create_param ( const char *name, const char *description, const int required
     return CR_PAR_DUPLICATED_PAR_IN_CMD;
   }
 
+  cli->incrementDepth();
+
   return CR_PAR_NO_ERROR;
 }
 
@@ -409,7 +411,7 @@ FUNCTION: write_files
 Writes .c and .h files if DataStructure is consistent AND FREES MEMORY
 You MUST call this function at the end of parsing even if an intermediate control has failed!
 */
-int write_files   ( const char *filenames)
+int write_files(const char *filenames)
 {
   if(!cli || !cli->cStatus)
   {
@@ -424,6 +426,7 @@ int write_files   ( const char *filenames)
     s = filenames;
     CExportFiles* cef = CExportFiles::GetInstance(s,cli->mapCtx);
     cef->InitFiles();
+    cef->WriteDepth(cli->getDepth());
     cef->WriteCtxDefs();
     cef->WriteCmdDefs();
     cef->WritePrmDefs();

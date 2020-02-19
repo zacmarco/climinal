@@ -214,6 +214,21 @@ void CExportFiles::InitFiles()
   
 }
 
+void CExportFiles::WriteDepth(const unsigned int depth)
+{
+  if(oss == NULL)
+    return;
+
+  if(fh)
+  {
+    std::string value(*filename);
+    for (std::string::iterator p = value.begin(); value.end() != p; ++p)
+        *p = toupper(*p);
+    *fh << "#define " << value << "_DEPTH (" << depth << ")" << std::endl;
+  }
+  
+}
+
 //public function to write Context definitions
 void CExportFiles::WriteCtxDefs()
 {

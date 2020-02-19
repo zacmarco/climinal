@@ -35,6 +35,7 @@ class CCliminalBuilder
 {
 private:
   static CCliminalBuilder* m_instance;
+  unsigned int depth=0;
 
 protected:
   CCliminalBuilder(void);
@@ -45,6 +46,9 @@ public:
 
   CCommands* getCurrentCommandDataStructurePointer();
   int InsertSubContext(const string s,CContexts* ctx);
+
+  void incrementDepth() { depth++; }
+  unsigned int getDepth() { return depth; }
 
   CCurrentItem* cStatus;
   MapContexts* mapCtx;

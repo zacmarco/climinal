@@ -73,6 +73,7 @@ public:
     ~CExportFiles();
 
     void InitFiles();
+    void WriteDepth(const unsigned int);
     void WriteCtxDefs();
     void WriteCmdDefs();
     void WritePrmDefs();
