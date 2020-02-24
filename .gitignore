@@ -20,6 +20,14 @@ examples/flat/flat.h
 examples/nettool/nettool
 examples/nettool/nettool.c
 examples/nettool/nettool.h
+examples/cpp/cpp
+examples/cpp/cpp.c
+examples/cpp/cpp.h
+examples/cpp/cpp.o
+examples/cpp/cpp_cbk.o
+examples/cpp/cpp_main.o
+examples/cpp/oa.txt
+examples/cpp/ob.txt
 tools/cmake/CMakeCache.txt
 tools/cmake/CMakeFiles/
 tools/cmake/CPackConfig.cmake
@@ -31,3 +39,6 @@ tools/cmake/climinal-tools-1.0.0_amd64.deb
 tools/cmake/climinalbuilder
 tools/cmake/cmake_install.cmake
 tools/cmake/install_manifest.txt
+cscope.in.out
+cscope.out
+cscope.po.out
