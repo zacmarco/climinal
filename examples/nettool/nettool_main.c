@@ -5,6 +5,6 @@ static priv_data_t priv_data = {0};
 
 int main()
 {
-    return climinal_main(stdin,stdout,getmaincontext_nettool(), &priv_data);  
+    return climinal_main(stdin,stdout,climinalhandle_nettool(), &priv_data);  
 }
 

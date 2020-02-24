@@ -49,6 +49,7 @@ int myclose(void *c)
 void set_terminal(int signal)
 {
     struct termios newt;
+    printf("HND\n");
     tcgetattr(STDIN_FILENO, &oldt);
     newt = oldt;
     newt.c_lflag |=  (ECHONL) ;
@@ -89,8 +90,7 @@ int main(int argc, const char **argv)
 
     if(in && out) {
         signal(SIGCONT, set_terminal);
-        set_terminal(SIGCONT);
-        ret=climinal_main(in,out,getmaincontext_testtool(), NULL);  
+        ret=climinal_main(in,out,climinalhandle_testtool(), NULL);  
         reset_terminal();
 
         fclose(in);
@@ -109,6 +109,6 @@ int main(int argc, const char **argv)
 #else
 int main()
 {
-    return climinal_main(stdin,stdout,getmaincontext_testtool(), NULL);  
+    return climinal_main(stdin,stdout,climinalhandle_testtool(), NULL);  
 }
 #endif
