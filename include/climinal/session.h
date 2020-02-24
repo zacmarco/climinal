@@ -36,7 +36,8 @@ extern "C"
     typedef struct Clisession   Clisession;
     typedef char                **(*Clicompleter)(Clisession*,const char*,int,int);
 
-    void    initsession     ( Clisession *session, Clicontext *main, const FILE *in, const FILE *out, void *cookie );
+    void    initsession     ( Clisession *session, Clihandle *handle, const FILE *in, const FILE *out, void *cookie );
+    void    endsession      ( Clisession *session );
     int     readline        ( Clisession *session, const char *prompt );
     void    setcompleter    ( Clisession *session, Clicompleter );
     void    printhelp       ( Clisession *session );

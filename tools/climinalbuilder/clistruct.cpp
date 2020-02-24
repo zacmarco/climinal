@@ -427,13 +427,15 @@ int write_files(const char *filenames)
     CExportFiles* cef = CExportFiles::GetInstance(s,cli->mapCtx);
     cef->InitFiles();
     cef->WriteDepth(cli->getDepth());
+    cef->WriteHndlDefs();
     cef->WriteCtxDefs();
     cef->WriteCmdDefs();
     cef->WritePrmDefs();
     cef->WriteRules();
     cef->WriteCallbackHeader();
     cef->WriteValuesCallbackHeader();
-    cef->WriteMainCtxEntryPoint();
+    cef->WriteConfig();
+    cef->WriteHandleEntryPoint();
     cef->EndFiles();
     delete cef;
     cef = NULL;

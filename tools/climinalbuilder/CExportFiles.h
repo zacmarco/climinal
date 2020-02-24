@@ -74,13 +74,15 @@ public:
 
     void InitFiles();
     void WriteDepth(const unsigned int);
+    void WriteHndlDefs();
     void WriteCtxDefs();
     void WriteCmdDefs();
     void WritePrmDefs();
     void WriteRules();
     void WriteCallbackHeader();
     void WriteValuesCallbackHeader();
-    void WriteMainCtxEntryPoint();
+    void WriteConfig();
+    void WriteHandleEntryPoint();
     void EndFiles();
 
 };

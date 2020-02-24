@@ -229,6 +229,25 @@ void CExportFiles::WriteDepth(const unsigned int depth)
   
 }
 
+//public function to write Handle definitions
+void CExportFiles::WriteHndlDefs()
+{
+  if(fcpp == NULL)
+    return;
+
+  if(mCtx == NULL)
+    return;
+
+  *oss << "/* Handle */\n";
+
+  *oss << "static Cliconfig config;\n";
+  *oss << "static Clihandle handle;\n";
+
+  *oss << "\n";
+  *fcpp << oss->str();
+  oss->str("");
+}
+
 //public function to write Context definitions
 void CExportFiles::WriteCtxDefs()
 {
@@ -402,8 +421,7 @@ void CExportFiles::WriteValuesCallbackHeader()
 }
 
 
-
-void CExportFiles::WriteMainCtxEntryPoint()
+void CExportFiles::WriteConfig()
 {
   if(fcpp == NULL)
     return;
@@ -414,11 +432,30 @@ void CExportFiles::WriteMainCtxEntryPoint()
   if(mCtx == NULL)
     return;
   
-  *oss << "\nClicontext *getmaincontext_" << *filename << "()\n{\n\treturn &main_ctx;\n}\n";
+  *oss << "static Cliconfig config = { 256 };\n";
+  *oss << "static Clihandle handle = { &main_ctx, &config };\n";
   *fcpp << oss->str();
   oss->str("");
 
-  *oss << "Clicontext *getmaincontext_" << *filename << "();\n\n";
+}
+
+
+void CExportFiles::WriteHandleEntryPoint()
+{
+  if(fcpp == NULL)
+    return;
+
+  if(fh == NULL)
+    return;
+
+  if(mCtx == NULL)
+    return;
+  
+  *oss << "\nClihandle *climinalhandle_" << *filename << "()\n{\n\treturn &handle;\n}\n";
+  *fcpp << oss->str();
+  oss->str("");
+
+  *oss << "Clihandle *climinalhandle_" << *filename << "();\n\n";
   *fh << oss->str();
   oss->str("");
 }

@@ -18,7 +18,7 @@ void entry_point( std::string name, const std::string& inputfile, const std::str
         ofile=stdout;
     }
 
-    climinal_main(ifile, ofile, getmaincontext_cpp(), &name);
+    climinal_main(ifile, ofile, climinalhandle_cpp(), &name);
 
     if( inputfile.length() ) {
         fclose(ifile);

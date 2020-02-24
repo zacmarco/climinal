@@ -652,11 +652,11 @@ static int parseline( Clisession *session )
 
                     hist=&(session->term.history);
                     num=strtol( &(main_cmd[1]), NULL, 10 );
-                    if( num<=0 || (num >= (hist->cmdnum-1)) || (hist->cmdnum>HISTORY_SIZE && num<(hist->cmdnum-HISTORY_SIZE)) ) {
+                    if( num<=0 || (num >= (hist->cmdnum-1)) || (hist->cmdnum>(hist->size+1) && num<(hist->cmdnum-(hist->size))) ) {
                         fprintf(session->term.out, ">>COMMAND NUMBER %u NOT AVAILABLE\n", num);
                         return CLIMINAL_NO_ERROR;
                     }
-                    entry_id=num%(HISTORY_ARRAY_SIZE);
+                    entry_id=num%(hist->size+1);
 
                     memset( session->term.buffer, '\0', sizeof(session->term.buffer) );
                     strcpy(session->term.buffer, hist->entry[entry_id]);
@@ -698,7 +698,7 @@ exit:
     return retval;
 }
 
-int climinal_main(const FILE *in, FILE *out, Clicontext *maincontext, void *cookie)
+int climinal_main(const FILE *in, FILE *out, Clihandle *handle, void *cookie)
 {
     int exit = CLIMINAL_NO_ERROR;
     Clisession *session=malloc(sizeof(Clisession));
@@ -706,7 +706,7 @@ int climinal_main(const FILE *in, FILE *out, Clicontext *maincontext, void *cook
     if(!session)
         return 1;
 
-    initsession( session, maincontext, in, out, cookie );
+    initsession( session, handle, in, out, cookie );
     setcompleter( session, completion );
 
     /* Adding an extra empty line to be used as a separator */
@@ -720,6 +720,7 @@ int climinal_main(const FILE *in, FILE *out, Clicontext *maincontext, void *cook
 
     res_terminal( &(session->term) );
 
+    endsession(session);
     free(session);
 
     return 0;
@@ -1013,7 +1014,7 @@ void dump_history( const Clisession *session )
 
     index = hist->newid;
 
-    cmdnum = (hist->cmdnum<HISTORY_ARRAY_SIZE) ? 1 : hist->cmdnum - HISTORY_SIZE;
+    cmdnum = (hist->cmdnum<(hist->size+1)) ? 1 : hist->cmdnum - hist->size;
 
     do {
         valid = strlen(hist->entry[index]);
@@ -1021,7 +1022,7 @@ void dump_history( const Clisession *session )
             fprintf(session->term.out, "%d\t%s\n", cmdnum, hist->entry[index]);
             cmdnum++;
             }
-        index=(index<HISTORY_ARRAY_SIZE-1) ? index+1 : 0;
+        index=(index<(hist->size)) ? index+1 : 0;
     }
     while( (index != hist->newid) );
 }

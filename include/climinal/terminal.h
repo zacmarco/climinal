@@ -50,7 +50,7 @@ extern "C"
     typedef struct Cliterm       Cliterm;
     typedef struct Clihistory    Clihistory;
 
-    void    init_history    ( Clihistory *history );
+    int     init_history    ( Clihistory *history, const unsigned int size );
     void    add_history     ( Clihistory *history, const char *in_buf );
     int     get_history     ( Clihistory *history, char *out_buf, int direction );
 
@@ -64,7 +64,8 @@ extern "C"
         unsigned int    getid;
         unsigned int    lastid;
         unsigned int    cmdnum;
-        Climinal_buffer      entry[HISTORY_ARRAY_SIZE];
+        unsigned int    size;
+        Climinal_buffer *entry;
     };
 
 

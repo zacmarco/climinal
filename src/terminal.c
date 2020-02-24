@@ -137,7 +137,7 @@ void add_history( Clihistory *hist, const char *in_buf )
     {
 
         hist->lastid = hist->newid;
-        hist->newid = ( hist->newid < (HISTORY_ARRAY_SIZE-1) ) ? hist->newid + 1 : 0;
+        hist->newid = ( hist->newid < (hist->size) ) ? hist->newid + 1 : 0;
     }
 
     newbuf = hist->entry[hist->lastid];
@@ -179,7 +179,7 @@ int get_history( Clihistory *hist, char *out_buf, int direction )
                 break;
         }
 
-        retid = (hist->getid + 1)%HISTORY_ARRAY_SIZE;
+        retid = (hist->getid + 1)%(hist->size+1);
         strcpy(out_buf, hist->entry[retid]);
 
     }
@@ -187,17 +187,31 @@ int get_history( Clihistory *hist, char *out_buf, int direction )
     return retid;
 }
 
-void init_history( Clihistory *hist )
+int init_history( Clihistory *hist, const unsigned int size )
 {
-    int count;
+    int count, retval=CLIMINAL_E_MEMORY;
 
     hist->newid=0;
     hist->getid=0;
     hist->lastid = 0;
     hist->cmdnum=0;
+    hist->size=size;
     
-    for(count=0; count<HISTORY_ARRAY_SIZE; ++count) {
-        strcpy(hist->entry[count], "");
+    hist->entry=malloc((size+1)*sizeof(Climinal_buffer));
+    if(hist->entry) {
+        for(count=0; count<((hist->size)+1); ++count) {
+            strcpy(hist->entry[count], "");
+        }
+        retval=CLIMINAL_NO_ERROR;
+    }
+
+    return retval;
+}
+
+void free_history( Clihistory *hist )
+{
+    if(hist->entry) {
+        free(hist->entry);
     }
 }
 
@@ -646,14 +660,19 @@ void setcompleter( Clisession *session, Clicompleter completer )
 }
 
 
-void initsession( Clisession *session, Clicontext *context, const FILE *in, const FILE *out, void *cookie )
+void initsession( Clisession *session, Clihandle *handle, const FILE *in, const FILE *out, void *cookie )
 {
     session->term.in  = (FILE*) ( (in)  ? in    : stdin   );
     session->term.out = (FILE*) ( (out) ? out   : stdout  );
     session->cookie   = cookie;
 
-    init_history( &(session->term.history) );
+    init_history( &(session->term.history), handle->config->history_size );
     set_terminal( &(session->term) );
 
-    session->active_context = session->main_context = context;
+    session->active_context = session->main_context = handle->maincontext;
+}
+
+void endsession( Clisession *session )
+{
+    free_history(&(session->term.history));
 }

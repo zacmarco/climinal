@@ -49,6 +49,9 @@ extern "C"
     typedef struct Cliparam     Cliparam;
     typedef struct Clicontext   Clicontext;
 
+    typedef struct Cliconfig    Cliconfig;
+    typedef struct Clihandle    Clihandle;
+
 
     /* These are the MACROs to handle the Cmdinfo structure without caring of its internals */
 #define CLIMINAL_GET_DEFVAL(cmdinfo)                 (cmdinfo->defval)
@@ -63,7 +66,7 @@ extern "C"
 
 
     /* The main CLI entry point */
-    int climinal_main(const FILE *in, FILE *out, Clicontext *maincontext, void *cookie);
+    int climinal_main(const FILE *in, FILE *out, Clihandle *handle, void *cookie);
 
 
     /***********************************************************************************
@@ -99,6 +102,17 @@ extern "C"
         Clicmd              *cmd;
         char                *prompt;
         unsigned int        depth;
+    };
+
+    struct Cliconfig
+    {
+        unsigned int history_size;
+    };
+
+    struct Clihandle
+    {
+        Clicontext          *maincontext;
+        Cliconfig           *config;
     };
 
 
