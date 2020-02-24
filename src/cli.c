@@ -718,8 +718,6 @@ int climinal_main(const FILE *in, FILE *out, Clicontext *maincontext, void *cook
     }
     while( exit != CLIMINAL_E_EXIT );
 
-    fprintf(out, "%s\n", "BYE");
-
     res_terminal( &(session->term) );
 
     free(session);

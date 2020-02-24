@@ -1,6 +1,7 @@
 #define _GNU_SOURCE
 #include <sys/types.h>
 #include <stdio.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -10,6 +11,8 @@
 
 #if __linux
 static FILE *outfile=NULL;
+static FILE *in, *out;
+struct termios oldt;
 
 ssize_t mywrite(void *c, const char *buf, size_t size)
 {
@@ -42,10 +45,27 @@ int myclose(void *c)
 {
     return close(fileno(c));
 }
+
+void set_terminal(int signal)
+{
+    struct termios newt;
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag |=  (ECHONL) ;
+    newt.c_lflag &=~ (ICANON | ECHO | ECHOE);
+    newt.c_cc[VTIME] = 10;
+    tcsetattr(fileno(in), TCSANOW, &newt);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+}
+
+void reset_terminal(void)
+{
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    tcsetattr(fileno(in), TCSANOW, &oldt);
+}
        
 int main(int argc, const char **argv)
 {
-    FILE *in, *out;
     int ret;
 
     if(argc == 2) {
@@ -68,19 +88,10 @@ int main(int argc, const char **argv)
     setvbuf(out, NULL, _IONBF, 0);
 
     if(in && out) {
-        struct termios oldt, newt;
-        tcgetattr(STDIN_FILENO, &oldt);
-        newt = oldt;
-        newt.c_lflag |=  (ECHONL) ;
-        newt.c_lflag &=~ (ICANON | ECHO | ECHOE);
-        newt.c_cc[VTIME] = 10;
-        tcsetattr(fileno(in), TCSANOW, &newt);
-        tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-
+        signal(SIGCONT, set_terminal);
+        set_terminal(SIGCONT);
         ret=climinal_main(in,out,getmaincontext_testtool(), NULL);  
-
-        tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-        tcsetattr(fileno(in), TCSANOW, &oldt);
+        reset_terminal();
 
         fclose(in);
         fclose(out);
