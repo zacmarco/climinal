@@ -42,6 +42,11 @@ inline char *getString( const char *in )
 
 %%
 
+\<config\>                                                      return CONFIG; 
+\<\/config\>                                                    return ENDCONFIG; 
+\<history_size\>                                                return HISTORY_SIZE; 
+\<\/history_size\>                                              return ENDHISTORY_SIZE; 
+
 \<name\>                                                        return NAME; 
 \<\/name\>                                                      return ENDNAME; 
 

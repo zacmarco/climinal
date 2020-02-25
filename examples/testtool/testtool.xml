@@ -1,4 +1,7 @@
 <!--This is a test-->
+<config>
+    <history_size>4</history_size>
+</config>
 <context>
     <prompt>ct0</prompt>
     <command>

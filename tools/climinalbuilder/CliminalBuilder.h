@@ -36,6 +36,7 @@ class CCliminalBuilder
 private:
   static CCliminalBuilder* m_instance;
   unsigned int depth=0;
+  CConfig config;
 
 protected:
   CCliminalBuilder(void);
@@ -49,6 +50,8 @@ public:
 
   void incrementDepth() { depth++; }
   unsigned int getDepth() { return depth; }
+
+  CConfig *getConfigPointer() { return &config; };
 
   CCurrentItem* cStatus;
   MapContexts* mapCtx;

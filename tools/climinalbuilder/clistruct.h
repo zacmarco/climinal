@@ -22,7 +22,16 @@
 #ifndef _CLISTRUCT_H_
 #define _CLISTRUCT_H_
 
+typedef struct config_s
+{
+    unsigned int history_size;
+} config_t;
+
 //EXPORTED
+
+int get_config(config_t *cfg);
+int set_config(const config_t *cfg);
+
 int create_param   ( const char *name, const char* description, const int required , const int numval, const char *values);
 int create_command ( const char *name, const char *brief, const char *help, const char *callback );
 int create_context ( const char *prompt );

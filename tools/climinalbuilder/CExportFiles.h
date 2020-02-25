@@ -31,6 +31,7 @@
 #include "cli_data.h"
 #include "clistruct.h"
 
+#include "CConfig.h"
 
 class CExportFiles
 {
@@ -81,7 +82,7 @@ public:
     void WriteRules();
     void WriteCallbackHeader();
     void WriteValuesCallbackHeader();
-    void WriteConfig();
+    void WriteConfig(CConfig *);
     void WriteHandleEntryPoint();
     void EndFiles();
 

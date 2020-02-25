@@ -15,7 +15,25 @@ namespace {
     void parse_param(ptree&);
     void parse_command(ptree&);
     void parse_context(ptree&);
+    void parse_config(ptree&);
     void parse_file(ptree&);
+
+    void parse_config(ptree &cfgtree)
+    {
+        config_t config;
+        int ret;
+
+        ret = get_config(&config);
+        if(!ret) {
+            // history_size
+            try {
+                config.history_size=stoi( cfgtree.get_child("history_size").get_value<std::string>() );
+            } catch (std::exception const& e) {}
+        
+            // flush the new config
+            set_config(&config);
+        }
+    }
 
     void parse_param(ptree &param)
     {
@@ -113,6 +131,10 @@ namespace {
 
     void parse_file(ptree &tree)
     {
+        try {
+            ptree &cfgtree = tree.get_child("config");
+            parse_config(cfgtree);
+        } catch (std::exception const& e){};
         ptree &ctx_tree = tree.get_child("context");
         parse_context(ctx_tree);
     }

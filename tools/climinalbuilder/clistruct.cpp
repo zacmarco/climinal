@@ -30,6 +30,43 @@
 CCliminalBuilder *cli;
 
 /*
+FUNCTION: get_config
+
+Copies the content of current config for custom manipulation
+*/
+int get_config(config_t *cfg)
+{
+
+  if(!cli)
+  {
+    return CR_PAR_SINGLETON_NOT_INSTANCED;
+  }
+
+  CConfig *config = cli->getConfigPointer();
+  cfg->history_size = config->getHistorySize();
+
+  return 0;
+}
+
+/*
+FUNCTION: set_config
+
+Overwrites current config with the one provided
+*/
+int set_config(const config_t *cfg)
+{
+  if(!cli)
+  {
+    return CR_PAR_SINGLETON_NOT_INSTANCED;
+  }
+
+  CConfig *config = cli->getConfigPointer();
+  config->setHistorySize(cfg->history_size);
+
+  return 0;
+}
+
+/*
 FUNCTION: create_param
 
 You can create a param:
@@ -434,7 +471,7 @@ int write_files(const char *filenames)
     cef->WriteRules();
     cef->WriteCallbackHeader();
     cef->WriteValuesCallbackHeader();
-    cef->WriteConfig();
+    cef->WriteConfig(cli->getConfigPointer());
     cef->WriteHandleEntryPoint();
     cef->EndFiles();
     delete cef;

@@ -25,7 +25,11 @@ char *description=NULL;
 
 %destructor { free((void*)$$); } TXT STR
 
-%token  NAME
+%token  CONFIG 
+        ENDCONFIG 
+        HISTORY_SIZE 
+        ENDHISTORY_SIZE
+        NAME
         ENDNAME
         CTX  
         CMD  
@@ -67,6 +71,21 @@ rules:
 
 rule:
         contexts
+        |
+        config contexts
+        ;
+
+config:
+        CONFIG HISTORY_SIZE NUM ENDHISTORY_SIZE ENDCONFIG
+        {
+            int ret;
+            config_t config;
+            ret = get_config(&config);
+            if(!ret) {
+                config.history_size=atoi($3);
+                set_config(&config);
+            }
+        }
         ;
 
 contexts:
