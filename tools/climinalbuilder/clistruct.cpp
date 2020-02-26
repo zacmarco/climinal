@@ -43,6 +43,8 @@ int get_config(config_t *cfg)
 
   CConfig *config = cli->getConfigPointer();
   cfg->history_size = config->getHistorySize();
+
+  cli=NULL;
   return 0;
 }
 
@@ -61,6 +63,7 @@ int set_config(const config_t *cfg)
   CConfig *config = cli->getConfigPointer();
   config->setHistorySize(cfg->history_size);
 
+  cli=NULL;
   return 0;
 }
 
