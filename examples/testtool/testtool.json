@@ -1,4 +1,7 @@
 {
+    "config": {
+        "history_size": "4"
+    },
     "context": {
         "prompt": "ct0",
         "command": {
