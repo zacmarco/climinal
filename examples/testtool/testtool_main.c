@@ -49,7 +49,6 @@ int myclose(void *c)
 void set_terminal(int signal)
 {
     struct termios newt;
-    printf("HND\n");
     tcgetattr(STDIN_FILENO, &oldt);
     newt = oldt;
     newt.c_lflag |=  (ECHONL) ;

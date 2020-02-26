@@ -488,7 +488,7 @@ int res_terminal( Cliterm *term )
 {
     int retVal = CLIMINAL_NO_ERROR;
 #ifdef HAVE_TERMIOS_H
-    retVal = tcsetattr( fileno(term->in), TCSANOW, &term->term_io );
+    retVal = tcsetattr( fileno(term->in), TCSANOW, &(term->term_io) );
 #endif
     return retVal;
 }

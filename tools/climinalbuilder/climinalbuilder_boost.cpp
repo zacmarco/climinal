@@ -131,12 +131,12 @@ namespace {
 
     void parse_file(ptree &tree)
     {
+        ptree &ctx_tree = tree.get_child("context");
+        parse_context(ctx_tree);
         try {
             ptree &cfgtree = tree.get_child("config");
             parse_config(cfgtree);
         } catch (std::exception const& e){};
-        ptree &ctx_tree = tree.get_child("context");
-        parse_context(ctx_tree);
     }
 
 }

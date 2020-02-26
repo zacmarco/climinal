@@ -36,15 +36,13 @@ Copies the content of current config for custom manipulation
 */
 int get_config(config_t *cfg)
 {
-
   if(!cli)
   {
-    return CR_PAR_SINGLETON_NOT_INSTANCED;
+    cli = CCliminalBuilder::getInstance();
   }
 
   CConfig *config = cli->getConfigPointer();
   cfg->history_size = config->getHistorySize();
-
   return 0;
 }
 
@@ -57,7 +55,7 @@ int set_config(const config_t *cfg)
 {
   if(!cli)
   {
-    return CR_PAR_SINGLETON_NOT_INSTANCED;
+    cli = CCliminalBuilder::getInstance();
   }
 
   CConfig *config = cli->getConfigPointer();
