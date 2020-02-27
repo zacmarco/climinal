@@ -36,6 +36,7 @@ Copies the content of current config for custom manipulation
 */
 int get_config(config_t *cfg)
 {
+  CCliminalBuilder *prev=cli;
   if(!cli)
   {
     cli = CCliminalBuilder::getInstance();
@@ -44,7 +45,7 @@ int get_config(config_t *cfg)
   CConfig *config = cli->getConfigPointer();
   cfg->history_size = config->getHistorySize();
 
-  cli=NULL;
+  cli=prev;
   return 0;
 }
 
@@ -55,6 +56,7 @@ Overwrites current config with the one provided
 */
 int set_config(const config_t *cfg)
 {
+  CCliminalBuilder *prev=cli;
   if(!cli)
   {
     cli = CCliminalBuilder::getInstance();
@@ -63,7 +65,7 @@ int set_config(const config_t *cfg)
   CConfig *config = cli->getConfigPointer();
   config->setHistorySize(cfg->history_size);
 
-  cli=NULL;
+  cli=prev;
   return 0;
 }
 
