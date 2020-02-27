@@ -27,6 +27,7 @@
 #endif
 
 #include "common.h"
+#include <atomic>
 
 class CConfig
 {
@@ -37,8 +38,12 @@ public:
   int  getHistorySize(void);
   void setHistorySize(const unsigned int s); 
 
+  int  getContextDepth(void);
+  void setContextDepth(const unsigned int d); 
+
 private:
   unsigned int history_size;
+  unsigned int context_depth;
 };
 
 #endif

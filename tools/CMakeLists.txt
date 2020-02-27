@@ -7,7 +7,7 @@ project(climinal-tools)
 
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_FLAGS "-g")
+set(CMAKE_CXX_FLAGS "-g -O2")
 
 # In case Boost is installed, we can use it to enable the advanced parser based on boost
 find_package(Boost 1.58.0)

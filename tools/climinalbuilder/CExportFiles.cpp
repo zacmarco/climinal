@@ -432,7 +432,7 @@ void CExportFiles::WriteConfig( CConfig *config )
   if(mCtx == NULL)
     return;
   
-  *oss << "static Cliconfig config = { " << config->getHistorySize() << " };\n";
+  *oss << "static Cliconfig config = { \n\t.history_size=" << config->getHistorySize() << ",\n\t.context_depth=" << config->getContextDepth() <<"\n};\n\n";
   *oss << "static Clihandle handle = { &main_ctx, &config };\n";
   *fcpp << oss->str();
   oss->str("");

@@ -107,6 +107,7 @@ extern "C"
     struct Cliconfig
     {
         unsigned int history_size;
+        unsigned int context_depth;
     };
 
     struct Clihandle

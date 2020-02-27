@@ -23,11 +23,13 @@
 #include "stdafx.h"
 #endif
 
+#include <iostream>
 #include "CliminalBuilder.h"
 #include "errsnmbr.h"
 #include "clistruct.h"
 
-CCliminalBuilder *cli;
+CCliminalBuilder *cli=NULL;
+static unsigned int cur_depth=0;
 
 /*
 FUNCTION: get_config
@@ -138,8 +140,6 @@ int create_param ( const char *name, const char *description, const int required
     delete cp;
     return CR_PAR_DUPLICATED_PAR_IN_CMD;
   }
-
-  cli->incrementDepth();
 
   return CR_PAR_NO_ERROR;
 }
@@ -252,6 +252,9 @@ You can create a SUBCONTEXT
 */
 int create_context ( const char *prompt )
 {
+  int res;
+  CContexts *ctx;
+  //std::cout << "New CTX: " << prompt << std::endl;
   if(!cli) //first context --> main
   {
     cli = CCliminalBuilder::getInstance();
@@ -263,63 +266,68 @@ int create_context ( const char *prompt )
 
     cli->cStatus->setCurrentCtx("main");
 
-    CContexts *ctx = new CContexts();
+    ctx = new CContexts();
     ctx->setPrompt(prompt);
     ctx->setName("main");
     ctx->setFatherCtx(NULL);
 
     cli->mapCtx->insert(make_pair(*cli->cStatus->getCurrentCtx(),ctx));
 
-    return CR_CTX_NO_ERROR;
+    res = CR_CTX_NO_ERROR;
   }
 
-  if(!cli->cStatus->IsConsistent())
+  else if(!cli->cStatus->IsConsistent())
   {
-    return CLI_BUILDER_INCOSISTENT_STATE;
+    res = CLI_BUILDER_INCOSISTENT_STATE;
   }
 
-  if(!cli->cStatus->IsNullCurrentPrm())
+  else if(!cli->cStatus->IsNullCurrentPrm())
   {
-    return CR_CTX_CURR_PAR_NOT_NULL;
+    res = CR_CTX_CURR_PAR_NOT_NULL;
   }
 
-  if(cli->cStatus->IsNullCurrentCmd())
+  else if(cli->cStatus->IsNullCurrentCmd())
   {
-    return CR_CTX_PARENT_CMD_NOT_FOUND;
+    res = CR_CTX_PARENT_CMD_NOT_FOUND;
   }
 
-  CCommands *ccmd = cli->getCurrentCommandDataStructurePointer();
-  if(!ccmd)
-  {
-    return CR_CTX_UNABLE_TO_FIND_RELATED_CMD;
+  if( res == CR_CTX_NO_ERROR ) {
+    std::cout << std::endl;
+    //std::cout.flush();
+    unsigned int depth=cli->getConfigPointer()->getContextDepth();
+    if( (++cur_depth) > depth) {
+        cli->getConfigPointer()->setContextDepth(cur_depth);
+    }
   }
 
-  //retrieve indexes for data-structure
-  string previousCtx = *cli->cStatus->getCurrentCtx();
-  cli->cStatus->UpdateCtxWithSubCtx();
-  string presentCtx = *cli->cStatus->getCurrentCtx();
+  if( !ctx ) {
+    CCommands *ccmd = cli->getCurrentCommandDataStructurePointer();
+    if(!ccmd)
+    {
+      return CR_CTX_UNABLE_TO_FIND_RELATED_CMD;
+    }
 
-  //create incoming CONTEXT in data-structure
-  CContexts *ctx = new CContexts();
-  ctx->setPrompt(prompt);
-  ctx->setName(presentCtx);
-  ctx->setFatherCtx(&previousCtx);
+    //retrieve indexes for data-structure
+    string previousCtx = *cli->cStatus->getCurrentCtx();
+    cli->cStatus->UpdateCtxWithSubCtx();
+    string presentCtx = *cli->cStatus->getCurrentCtx();
 
-  //update command with its subcontext
-  if(ccmd->setSubContext(presentCtx))
-  {
-    delete ctx;
-    return CR_CTX_FATHER_CMD_ALR_HAS_SUBCTX;
+    //create incoming CONTEXT in data-structure
+    ctx = new CContexts();
+    ctx->setPrompt(prompt);
+    ctx->setName(presentCtx);
+    ctx->setFatherCtx(&previousCtx);
+
+    //update command with its subcontext
+    if(ccmd->setSubContext(presentCtx))
+    {
+      delete ctx;
+      res=CR_CTX_FATHER_CMD_ALR_HAS_SUBCTX;
+    } else {
+      //insert new context
+      res = cli->InsertSubContext(presentCtx,ctx);
+    }
   }
-
-  //insert new context
-  int res = cli->InsertSubContext(presentCtx,ctx);
-
-  if(!res)
-  {
-    //TODO Error Handling
-  }
-
   return res;
 }
 
@@ -354,6 +362,7 @@ int end_param(void)
   }
 
   cli->cStatus->EraseCurrentPrm();
+  cur_depth--;
   return END_PAR_NO_ERROR;
 }
 

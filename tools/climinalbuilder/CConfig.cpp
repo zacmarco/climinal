@@ -25,6 +25,7 @@
 CConfig::CConfig()
 {
     history_size=256;
+    context_depth=0;
 }
 
 CConfig::~CConfig() {}
@@ -38,5 +39,16 @@ int  CConfig::getHistorySize(void)
 void CConfig::setHistorySize(const unsigned int s)
 {
     history_size=s;
+}
+
+int  CConfig::getContextDepth(void)
+{
+    return context_depth;
+}
+
+
+void CConfig::setContextDepth(const unsigned int d)
+{
+    context_depth=d;
 }
 
