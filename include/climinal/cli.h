@@ -137,6 +137,7 @@ extern "C"
         char            *defval;
         unsigned int    paramnum;
         struct Cmdparam *param[MAX_PARAM_NUM];
+        char            new_prompt[256];
     };
 
     Cmdparam *findparam( const Cmdinfo *info, const char *name );

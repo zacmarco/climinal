@@ -151,6 +151,11 @@ static inline int execute( const Clisession *session, const Clicmd *cmd, const c
 
                 /* Set back terminal to interactive mode */
                 set_terminal( (Cliterm*) &session->term );
+
+                /* In case user set a new prompt value, let's add it to the stack */
+                if(strlen(cmdinfo->new_prompt)) {
+                    strcpy(session->prompt_stack[session->cur_depth], cmdinfo->new_prompt);
+                }
             }
             /* Finally destroy the structure sent to the callback */
             destroycmdinfo( cmdinfo ); 
@@ -550,6 +555,7 @@ static char **completion (Clisession *session, const char *text, int start, int 
 static int parsecommon( Clisession *session, const char *main_cmd )
 {
     int retval  = CLIMINAL_NO_ERROR;
+    int count;
 
     if( !strcmp(main_cmd, "bye") ) {
         retval = CLIMINAL_E_EXIT;
@@ -557,11 +563,18 @@ static int parsecommon( Clisession *session, const char *main_cmd )
     else if( (session->main_context->depth>1) && (!strcmp(main_cmd, "exit")) ) {
         if( session->active_context->father ) {
             session->active_context=session->active_context->father;
+            session->prompt_stack[(--(session->cur_depth))][0]='\0';
+            strcpy(session->prompt, session->prompt_stack[session->cur_depth]);
         }
     }
     else if( (session->main_context->depth>1) && (!strcmp(main_cmd, "end")) ) {
         while( session->active_context->father != NULL ) {
             session->active_context = session->active_context->father;
+            for(count=0; count<session->cur_depth; ++count) {
+                session->prompt_stack[count][0]='\0';
+                (session->cur_depth)--;
+            }
+            strcpy(session->prompt, session->prompt_stack[0]);
         }
     }
     else if( !strcmp(main_cmd, "history") ) {
@@ -626,7 +639,7 @@ static int parseline( Clisession *session )
     int             bufempty;
 
     /* Get the new line */
-    if(readline( session, session->active_context->prompt )) {
+    if(readline( session, strlen(session->prompt)?(session->prompt):(session->active_context->prompt) )) {
         retval=CLIMINAL_E_EXIT;
         goto exit;
     }
@@ -682,6 +695,12 @@ static int parseline( Clisession *session )
                     {
                         ((Clicontext*)(cmd->subcontext))->father=session->active_context;
                         session->active_context = ((Clicontext*)(cmd->subcontext));
+                        (session->cur_depth)++;
+                        if(strlen(session->prompt_stack[(session->cur_depth-1)])) {
+                            strcpy(session->prompt, session->prompt_stack[(session->cur_depth)-1]);
+                        } else {
+                            strcpy(session->prompt, session->active_context->prompt);
+                        }
                     }
                     
                 }

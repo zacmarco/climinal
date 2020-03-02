@@ -662,9 +662,17 @@ void setcompleter( Clisession *session, Clicompleter completer )
 
 void initsession( Clisession *session, Clihandle *handle, const FILE *in, const FILE *out, void *cookie )
 {
+    unsigned int count;
+
     session->term.in  = (FILE*) ( (in)  ? in    : stdin   );
     session->term.out = (FILE*) ( (out) ? out   : stdout  );
     session->cookie   = cookie;
+    session->prompt_stack = malloc(sizeof(prompt_t)*(handle->config->context_depth));
+
+    for(count=0; count< handle->config->context_depth; ++count) {
+        strcpy(session->prompt_stack[count], "");
+    }
+    session->cur_depth=0;
 
     init_history( &(session->term.history), handle->config->history_size );
     set_terminal( &(session->term) );

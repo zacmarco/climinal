@@ -18,6 +18,7 @@ int cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line, void *cookie
         }
         
     }
+    //strcpy(((Cmdinfo*)info)->new_prompt, "pizza");
     return CLIMINAL_NO_ERROR;
 }
 

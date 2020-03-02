@@ -252,8 +252,8 @@ You can create a SUBCONTEXT
 */
 int create_context ( const char *prompt )
 {
-  int res;
-  CContexts *ctx;
+  int res=CR_CTX_NO_ERROR;
+  CContexts *ctx=NULL;
   //std::cout << "New CTX: " << prompt << std::endl;
   if(!cli) //first context --> main
   {
