@@ -669,15 +669,22 @@ void initsession( Clisession *session, Clihandle *handle, const FILE *in, const 
     session->cookie   = cookie;
     session->prompt_stack = malloc(sizeof(prompt_t)*(handle->config->context_depth));
 
-    for(count=0; count< handle->config->context_depth; ++count) {
+    /* Set main context as active */
+    session->active_context = session->main_context = handle->maincontext;
+
+    /* Init the prompt stack (to be used for runtime prompt change). TOS points to main context's prompt */
+    session->cur_depth=0;
+    strcpy(session->prompt_stack[session->cur_depth], session->active_context->prompt);
+    for(count=1; count< handle->config->context_depth; ++count) {
         strcpy(session->prompt_stack[count], "");
     }
-    session->cur_depth=0;
 
+    /* Init history circular buffer */
     init_history( &(session->term.history), handle->config->history_size );
+
+    /* Set terminal properties to interactive (non canonical) mode */
     set_terminal( &(session->term) );
 
-    session->active_context = session->main_context = handle->maincontext;
 }
 
 void endsession( Clisession *session )

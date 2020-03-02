@@ -82,7 +82,16 @@
                     "name": "c1_a",
                     "brief": "c1_a",
                     "help": "Command 1_a",
-                    "function": "cbk"
+                    "function": "cbk",
+                    "context": {
+                        "prompt": "ct2",
+                        "command": {
+                            "name": "c2_a",
+                            "brief": "c2_a",
+                            "help": "Command 2_a",
+                            "function": "cbk"
+                        }
+                    }
                 }
             }
         }

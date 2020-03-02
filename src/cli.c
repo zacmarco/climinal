@@ -153,8 +153,8 @@ static inline int execute( const Clisession *session, const Clicmd *cmd, const c
                 set_terminal( (Cliterm*) &session->term );
 
                 /* In case user set a new prompt value, let's add it to the stack */
-                if(strlen(cmdinfo->new_prompt)) {
-                    strcpy(session->prompt_stack[session->cur_depth], cmdinfo->new_prompt);
+                if(strlen(cmdinfo->new_prompt) && cmd->subcontext) {
+                    strcpy(session->prompt_stack[(session->cur_depth)+1], cmdinfo->new_prompt);
                 }
             }
             /* Finally destroy the structure sent to the callback */
@@ -563,18 +563,16 @@ static int parsecommon( Clisession *session, const char *main_cmd )
     else if( (session->main_context->depth>1) && (!strcmp(main_cmd, "exit")) ) {
         if( session->active_context->father ) {
             session->active_context=session->active_context->father;
-            session->prompt_stack[(--(session->cur_depth))][0]='\0';
-            strcpy(session->prompt, session->prompt_stack[session->cur_depth]);
+            session->prompt_stack[((session->cur_depth)--)][0]='\0';
         }
     }
     else if( (session->main_context->depth>1) && (!strcmp(main_cmd, "end")) ) {
         while( session->active_context->father != NULL ) {
             session->active_context = session->active_context->father;
-            for(count=0; count<session->cur_depth; ++count) {
+            for(count=1; count<session->cur_depth; ++count) {
                 session->prompt_stack[count][0]='\0';
-                (session->cur_depth)--;
             }
-            strcpy(session->prompt, session->prompt_stack[0]);
+            session->cur_depth=0;
         }
     }
     else if( !strcmp(main_cmd, "history") ) {
@@ -638,8 +636,13 @@ static int parseline( Clisession *session )
     char            *next_data;
     int             bufempty;
 
+    /* If no runtime prompt change, let's just use this comment's prompt */
+    if(!strlen((session->prompt_stack[session->cur_depth]))) {
+       strcpy(session->prompt_stack[session->cur_depth], session->active_context->prompt); 
+    }
+
     /* Get the new line */
-    if(readline( session, strlen(session->prompt)?(session->prompt):(session->active_context->prompt) )) {
+    if(readline( session, strlen(session->prompt_stack[session->cur_depth])?(session->prompt_stack[session->cur_depth]):(session->active_context->prompt) )) {
         retval=CLIMINAL_E_EXIT;
         goto exit;
     }
@@ -683,29 +686,19 @@ static int parseline( Clisession *session )
                 }
             }
 
-            if( (retval = parsecommon(session, main_cmd)) == CLIMINAL_E_NOT_FOUND )
-            {
-                if( ( cmd=find_active_cmd(session, &next_data) ) )
-                {
+            if( (retval = parsecommon(session, main_cmd)) == CLIMINAL_E_NOT_FOUND ) {
+                if( ( cmd=find_active_cmd(session, &next_data) ) ) {
                     /* Execute the callback all the cases */
                     retval = execute(session, cmd, buf, next_data) ;
 
                     /* If it's only a context change, and no errors in callback, do it!!! */
-                    if( cmd->subcontext && CLIMINAL_SUCCESS(retval) )
-                    {
+                    if( cmd->subcontext && CLIMINAL_SUCCESS(retval) ) {
                         ((Clicontext*)(cmd->subcontext))->father=session->active_context;
                         session->active_context = ((Clicontext*)(cmd->subcontext));
                         (session->cur_depth)++;
-                        if(strlen(session->prompt_stack[(session->cur_depth-1)])) {
-                            strcpy(session->prompt, session->prompt_stack[(session->cur_depth)-1]);
-                        } else {
-                            strcpy(session->prompt, session->active_context->prompt);
-                        }
                     }
                     
-                }
-                else
-                {
+                } else {
                     fprintf(session->term.out, ">> COMMAND NOT FOUND\n");
                 }
             }
@@ -875,7 +868,7 @@ void printhelp( Clisession *session )
     {
         printallcmd( session );
     }
-    fprintf( session->term.out, "%s> %s", session->active_context->prompt, session->term.buffer );
+    fprintf( session->term.out, "%s> %s", session->prompt_stack[session->cur_depth], session->term.buffer );
     CURS_L( session->term.out, (session->term.len)-(session->term.pos));
 }
 

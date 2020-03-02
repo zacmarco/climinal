@@ -110,6 +110,7 @@ int config_net_interface_cbk(FILE* in, FILE* out, const Cmdinfo *info, const cha
         if( found ) {
             strcpy(priv_data->ifname, val);
             fprintf( out, "Current interface: \"%s\"\n", priv_data->ifname );
+            CLIMINAL_SET_NEXT_PROMPT(cmdinfo, priv_data->ifname);
         } else {
             fprintf( out, "Interface \'%s\' not found\n", val );
             err=CLIMINAL_E_NOT_FOUND;

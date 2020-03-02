@@ -52,7 +52,6 @@ extern "C"
         Clicontext      *main_context;
         void            *cookie;
 
-        prompt_t        prompt;
         prompt_t        *prompt_stack;
         unsigned int    cur_depth;
 

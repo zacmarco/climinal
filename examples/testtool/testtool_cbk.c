@@ -18,7 +18,9 @@ int cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line, void *cookie
         }
         
     }
-    //strcpy(((Cmdinfo*)info)->new_prompt, "pizza");
+    if( !strncmp(line, "c0_d", strlen("c0_d")) ) {
+            CLIMINAL_SET_NEXT_PROMPT(cmdinfo, "c0_d_runtime");
+    }
     return CLIMINAL_NO_ERROR;
 }
 

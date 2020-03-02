@@ -64,6 +64,7 @@ extern "C"
 #define CLIMINAL_GET_PARAM_VAL(cmdinfo, parnum)      (   ((cmdinfo->param[parnum]) && (parnum<=cmdinfo->paramnum))? \
         cmdinfo->param[parnum]->value:NULL)
 
+#define CLIMINAL_SET_NEXT_PROMPT(cmdinfo, prompt)    (strcpy(((Cmdinfo*)info)->new_prompt, prompt))
 
     /* The main CLI entry point */
     int climinal_main(const FILE *in, FILE *out, Clihandle *handle, void *cookie);

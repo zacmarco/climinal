@@ -84,6 +84,15 @@
                 <brief>"c1_a"</brief>
                 <help>"Command 1_a"</help>
                 <function>cbk</function>
+                <context>
+                    <prompt>ct2</prompt>
+                    <command>
+                        <name>c2_a</name>
+                        <brief>"c2_a"</brief>
+                        <help>"Command 2_a"</help>
+                        <function>cbk</function>
+                    </command>
+                </context>
             </command>
         </context>
     </command>

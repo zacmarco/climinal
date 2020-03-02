@@ -46,7 +46,7 @@ int myclose(void *c)
     return close(fileno(c));
 }
 
-void set_terminal(int signal)
+void set_term(int signal)
 {
     struct termios newt;
     tcgetattr(STDIN_FILENO, &oldt);
@@ -58,7 +58,7 @@ void set_terminal(int signal)
     tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 }
 
-void reset_terminal(void)
+void reset_term(void)
 {
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
     tcsetattr(fileno(in), TCSANOW, &oldt);
@@ -88,9 +88,10 @@ int main(int argc, const char **argv)
     setvbuf(out, NULL, _IONBF, 0);
 
     if(in && out) {
-        signal(SIGCONT, set_terminal);
+        signal(SIGCONT, set_term);
+        set_term(SIGCONT);
         ret=climinal_main(in,out,climinalhandle_testtool(), NULL);  
-        reset_terminal();
+        reset_term();
 
         fclose(in);
         fclose(out);
