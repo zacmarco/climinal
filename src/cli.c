@@ -103,7 +103,7 @@ static char *last_word( const char *in, const char *in_end, unsigned int *len )
 
 static inline int execute( const Clisession *session, const Clicmd *cmd, const char *line, char *next_data )  
 {
-    int         retval      = CLIMINAL_E_INVALID;
+    int         retval      = CLIMINAL_NO_ERROR;
     Cliparam    *param      = cmd->param;
     Cmdinfo     *cmdinfo    = NULL;
     Cmdparam    *defparam;
@@ -128,12 +128,14 @@ static inline int execute( const Clisession *session, const Clicmd *cmd, const c
                     {
                         ok = 0;
                         fprintf(session->term.out, ">> MISSING PARAMETER: \"%s\"\n", param->name);
+                        retval=CLIMINAL_E_INVALID;
                     }
                 }
                 else if( (param->required) && !(cmdinfo->defval) )
                 {
                     ok = 0;
                     fprintf(session->term.out, ">> MISSING DEFAULT PARAMETER\n");
+                    retval=CLIMINAL_E_INVALID;
                 }
                 if( ok )
                 {
@@ -152,18 +154,14 @@ static inline int execute( const Clisession *session, const Clicmd *cmd, const c
                 /* Set back terminal to interactive mode */
                 set_terminal( (Cliterm*) &session->term );
 
-                /* In case user set a new prompt value, let's add it to the stack */
-                if(strlen(cmdinfo->new_prompt) && cmd->subcontext) {
+                /* In case user sets a new prompt value in command's callback, let's add it to the prompt stack */
+                if( (retval==CLIMINAL_NO_ERROR) && (strlen(cmdinfo->new_prompt)) && (cmd->subcontext) ) {
                     strcpy(session->prompt_stack[(session->cur_depth)+1], cmdinfo->new_prompt);
                 }
             }
             /* Finally destroy the structure sent to the callback */
             destroycmdinfo( cmdinfo ); 
         }
-    }
-    else
-    {
-        fprintf(session->term.out, ">> NO REGISTERED ACTION\n");
     }
 
     return retval;
@@ -336,50 +334,6 @@ static char *command_generator ( Clisession *session, const char *text, int text
             if( name && ( name <= text ) )
                 goto exit;
 
-            /* Ok... let's keep on completing */
-            if( !bye_matched )
-            {
-                name="bye";
-                if(!strncmp(name, text, strlen(text))) {
-                    bye_matched = 1;
-                    retval = malloc(strlen(name)+1);
-                    strcpy(retval, name);
-                    goto exit;
-                }
-            }
-            if( !history_matched )
-            {
-                name="history";
-                if(!strncmp(name, text, strlen(text))) {
-                    history_matched = 1;
-                    retval = malloc(strlen(name)+1);
-                    strcpy(retval, name);
-                    goto exit;
-                }
-            }
-            if( session->main_context->depth>1 ) {
-                if( !exit_matched  )
-                {
-                    name="exit";
-                    if(!strncmp(name, text, strlen(text))) {
-                        exit_matched = 1;
-                        retval = malloc(strlen(name)+1);
-                        strcpy(retval, name);
-                        goto exit;
-                    }
-                }
-                if( !end_matched  )
-                {
-                    name="end";
-                    if(!strncmp(name, text, strlen(text))) {
-                        end_matched = 1;
-                        retval = malloc(strlen(name)+1);
-                        strcpy(retval, name);
-                        goto exit;
-                    }
-                }
-            }
-
             /* Because there's no active command, let's set param_num to 0 to avoid useless param completion */
             param_num = 0;
         }
@@ -394,6 +348,52 @@ static char *command_generator ( Clisession *session, const char *text, int text
             }
         }
     }
+
+
+    /* Common commands */
+    if( !bye_matched )
+    {
+        name="bye";
+        if(!strncmp(name, text, strlen(text))) {
+            bye_matched = 1;
+            retval = malloc(strlen(name)+1);
+            strcpy(retval, name);
+            goto exit;
+        }
+    }
+    if( !history_matched )
+    {
+        name="history";
+        if(!strncmp(name, text, strlen(text))) {
+            history_matched = 1;
+            retval = malloc(strlen(name)+1);
+            strcpy(retval, name);
+            goto exit;
+        }
+    }
+    if( session->main_context->depth>1 ) {
+        if( !exit_matched  )
+        {
+            name="exit";
+            if(!strncmp(name, text, strlen(text))) {
+                exit_matched = 1;
+                retval = malloc(strlen(name)+1);
+                strcpy(retval, name);
+                goto exit;
+            }
+        }
+        if( !end_matched  )
+        {
+            name="end";
+            if(!strncmp(name, text, strlen(text))) {
+                end_matched = 1;
+                retval = malloc(strlen(name)+1);
+                strcpy(retval, name);
+                goto exit;
+            }
+        }
+    }
+
 
     /* Ready to check parameters */
     while( (list_index < (param_num+subcmd_num)) && !retval )

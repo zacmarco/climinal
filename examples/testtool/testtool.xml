@@ -92,6 +92,18 @@
                         <help>"Command 2_a"</help>
                         <function>cbk</function>
                     </command>
+                    <command>
+                        <name>e2_a</name>
+                        <brief>"e2_a"</brief>
+                        <help>"Command e2_a"</help>
+                        <function>cbk</function>
+                    </command>
+                    <command>
+                        <name>h2_a</name>
+                        <brief>"h2_a"</brief>
+                        <help>"Command h2_a"</help>
+                        <function>cbk</function>
+                    </command>
                 </context>
             </command>
         </context>
