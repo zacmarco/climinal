@@ -90,6 +90,18 @@
                             "brief": "c2_a",
                             "help": "Command 2_a",
                             "function": "cbk"
+                        },
+                        "command": {
+                            "name": "e2_a",
+                            "brief": "e2_a",
+                            "help": "Command e2_a",
+                            "function": "cbk"
+                        },
+                        "command": {
+                            "name": "h2_a",
+                            "brief": "h2_a",
+                            "help": "Command h2_a",
+                            "function": "cbk"
                         }
                     }
                 }
