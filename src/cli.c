@@ -274,9 +274,64 @@ static void get_main_cmd( Clisession *session, char *out_buf )
     out_buf[num]='\0';
 }
 
+static char *command_generator_common ( Clisession *session, const char *text, int state)
+{
+    static int exit_matched, end_matched, bye_matched, history_matched;
+    int match=0;
+    char *name, *retval=NULL;
+    if(!state) {
+        bye_matched = end_matched = exit_matched = history_matched = 0;
+    }
+
+    /* Common commands */
+    if( !bye_matched )
+    {
+        name="bye";
+        if(!strncmp(name, text, strlen(text))) {
+            bye_matched = 1;
+            match = 1;
+            goto exit;
+        }
+    }
+    if( !history_matched )
+    {
+        name="history";
+        if(!strncmp(name, text, strlen(text))) {
+            history_matched = 1;
+            match = 1;
+            goto exit;
+        }
+    }
+    if( session->main_context->depth>1 ) {
+        if( !exit_matched  )
+        {
+            name="exit";
+            if(!strncmp(name, text, strlen(text))) {
+                exit_matched = 1;
+                match = 1;
+                goto exit;
+            }
+        }
+        if( !end_matched  )
+        {
+            name="end";
+            if(!strncmp(name, text, strlen(text))) {
+                end_matched = 1;
+                match = 1;
+                goto exit;
+            }
+        }
+    }
+exit:
+    if(match) {
+        retval = strdup(name);
+    }
+    return retval;
+}
+
 static char *command_generator ( Clisession *session, const char *text, int textlen, int state)
 {
-    static int      list_index, exit_matched, end_matched, bye_matched, history_matched, param_num, subcmd_num;
+    static int      list_index, param_num, subcmd_num;
     static Clicmd   *cmdlist;
     int             count;
     char            *name=NULL, *retval=NULL, *nextname=NULL;
@@ -296,7 +351,6 @@ static char *command_generator ( Clisession *session, const char *text, int text
         list_index  = 0;
         param_num   = subcmd_num = 0;
         cmdlist     = session->active_context->cmd;
-        bye_matched = end_matched = exit_matched = history_matched = 0;
 
         char *next_data;
 
@@ -349,78 +403,38 @@ static char *command_generator ( Clisession *session, const char *text, int text
         }
     }
 
+    if( !session->active_cmd ) {
+        retval=command_generator_common(session, text, state);
+    }
 
-    /* Common commands */
-    if( !bye_matched )
-    {
-        name="bye";
-        if(!strncmp(name, text, strlen(text))) {
-            bye_matched = 1;
-            retval = malloc(strlen(name)+1);
-            strcpy(retval, name);
-            goto exit;
-        }
-    }
-    if( !history_matched )
-    {
-        name="history";
-        if(!strncmp(name, text, strlen(text))) {
-            history_matched = 1;
-            retval = malloc(strlen(name)+1);
-            strcpy(retval, name);
-            goto exit;
-        }
-    }
-    if( session->main_context->depth>1 ) {
-        if( !exit_matched  )
+    if(!retval) {
+        /* Ready to check parameters */
+        while( (list_index < (param_num+subcmd_num)) && !retval )
         {
-            name="exit";
-            if(!strncmp(name, text, strlen(text))) {
-                exit_matched = 1;
-                retval = malloc(strlen(name)+1);
-                strcpy(retval, name);
+            if( list_index < param_num )
+                name = session->active_cmd->param[list_index].name;
+            else if( list_index < (param_num+subcmd_num) )
+                name = cmdlist[(list_index)-param_num].name;
+            else {
+                name=NULL;
                 goto exit;
             }
-        }
-        if( !end_matched  )
-        {
-            name="end";
-            if(!strncmp(name, text, strlen(text))) {
-                end_matched = 1;
-                retval = malloc(strlen(name)+1);
-                strcpy(retval, name);
-                goto exit;
-            }
-        }
-    }
 
+            list_index++;
 
-    /* Ready to check parameters */
-    while( (list_index < (param_num+subcmd_num)) && !retval )
-    {
-        if( list_index < param_num )
-            name = session->active_cmd->param[list_index].name;
-        else if( list_index < (param_num+subcmd_num) )
-            name = cmdlist[(list_index)-param_num].name;
-        else {
-            name=NULL;
-            goto exit;
-        }
-
-        list_index++;
-
-        if ( strncmp (name, text, textlen) == 0 )
-        {
-            /*  
-                Checking if the whole word is already present in the command
-                Note that words containing the searched one don't match
-             */
-            sprintf(buf,"%s%c", name, ' ');
-            if( ! strstr(session->term.buffer, buf) )
+            if ( strncmp (name, text, textlen) == 0 )
             {
-                retval = malloc(strlen(name)+1);
-                strcpy(retval, name);
-                goto exit;
+                /*  
+                    Checking if the whole word is already present in the command
+                    Note that words containing the searched one don't match
+                 */
+                sprintf(buf,"%s%c", name, ' ');
+                if( ! strstr(session->term.buffer, buf) )
+                {
+                    retval = malloc(strlen(name)+1);
+                    strcpy(retval, name);
+                    goto exit;
+                }
             }
         }
     }
