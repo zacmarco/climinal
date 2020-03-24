@@ -664,6 +664,8 @@ void initsession( Clisession *session, Clihandle *handle, const FILE *in, const 
 {
     unsigned int count;
 
+    memset(session, 0x0, sizeof(Clisession));
+
     session->term.in  = (FILE*) ( (in)  ? in    : stdin   );
     session->term.out = (FILE*) ( (out) ? out   : stdout  );
     session->cookie   = cookie;
@@ -690,4 +692,5 @@ void initsession( Clisession *session, Clihandle *handle, const FILE *in, const 
 void endsession( Clisession *session )
 {
     free_history(&(session->term.history));
+    free(session->prompt_stack);
 }

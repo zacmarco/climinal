@@ -24,6 +24,15 @@ int cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line, void *cookie
     return CLIMINAL_NO_ERROR;
 }
 
+int def_values_cbk(char **val, void *cookie)
+{
+    int count=0;
+    val[count++]=strdup("def1");
+    val[count++]=strdup("def2");
+    return count;
+}
+
+
 int values_cbk(char **val, void *cookie)
 {
     int count=0;
@@ -31,4 +40,3 @@ int values_cbk(char **val, void *cookie)
     val[count++]=strdup("val2");
     return count;
 }
-

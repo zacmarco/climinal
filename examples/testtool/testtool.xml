@@ -17,6 +17,7 @@
         <function>cbk</function>
         <param>
             <required>true</required>
+            <values>def_values_cbk</values>
         </param>
         <param>
             <name>p0_b_1</name>

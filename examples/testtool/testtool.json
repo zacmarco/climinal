@@ -16,7 +16,8 @@
             "help": "Command 0_b",
             "function": "cbk",
             "param": {
-                "required": "true"
+                "required": "true",
+                "values": "def_values_cbk"
             },
             "param": {
                 "name": "p0_b_1",

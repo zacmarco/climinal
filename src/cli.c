@@ -477,13 +477,18 @@ static char **completion_matches( Clisession *session, const char *text, unsigne
         while( (param->name) && (!p_matches) ) {
             if( strlen(param->name)>0 ) {
                 char *param_in_buf=strstr(session->term.buffer, param->name);
-                if( param_in_buf &&/*(!strcmp(param->name, word)) &&*/ 
-                    (param->val) &&
-                    (word_distance(param_in_buf, &(session->term.buffer[session->term.pos]), &(session->term.buffer[MAX_BUFLEN])) <= param->numval) ) {
-
-                    /* Let's call custom callback */
-                    p_matches=param->val(p_val, session->cookie);
-                }
+                if(param_in_buf) {
+                    int w_distance = word_distance(param_in_buf, &(session->term.buffer[session->term.pos]), &(session->term.buffer[MAX_BUFLEN])) ;
+                    //printf("WD=%d\n", w_distance);
+                    if( (w_distance>0) && (w_distance<=param->numval) ) { 
+                        if(param->val) {
+                            /* Let's call custom callback */
+                            p_matches=param->val(p_val, session->cookie);
+                        } else {
+                            goto exit;
+                        }
+                    }
+                } 
             } 
             param++;
         } 
@@ -538,6 +543,7 @@ static char **completion_matches( Clisession *session, const char *text, unsigne
         while( tempBuf );
     }
 
+exit:
     /* The matching array MUST be NULL terminated */
     if( matches )
         retval[matches] = NULL;
@@ -620,15 +626,15 @@ static int word_distance( const char *start, const char *current, const char *en
 
     next=left;
     next_word(next, endbuf, &len);
+    //printf("\nLEFT:%X CURR:%X NEXT:%X RIGHT:%X ENDBUF:%X\n", left, curr, next, right, endbuf);
 
     do{
-        curr=next;
-        next=next_word(curr+len, endbuf, &len);
-        //printf("\nCURR:%X NEXT:%X RIGHT:%X ENDBUF:%X\n", curr, next, right, endbuf);
-        if((next+len)<right) {
+        if( next+len<right ) {
             count++;
         }
-        //printf("left: %16X, right: %16X, curr: %16X\n", left, right, curr);
+        curr=next;
+        next=next_word(curr+len, endbuf, &len);
+        //printf("\nLEFT:%X CURR:%X NEXT:%X RIGHT:%X ENDBUF:%X\n", left, curr, next, right, endbuf);
         //printf("STRING: %s\n", left);
     } while( (next) && (next<right) && (curr<next) );
 
