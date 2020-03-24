@@ -444,14 +444,9 @@ exit:
     return retval;
 }
 
-static char **completion_matches( Clisession *session, const char *text, unsigned int len )
+static int values_generator( Clisession *session, char ***retval, int *matches )
 {
-    char *tempBuf;
-    char **retval=NULL;
-    int state=0, matches=0;
-    unsigned int tempSize=0;
-
-
+    int done=0;
     /* Let's first try to understand whether there is a param value to complete */
     if( (session->active_cmd) && (session->active_cmd->param) )
     {
@@ -481,6 +476,7 @@ static char **completion_matches( Clisession *session, const char *text, unsigne
                     int w_distance = word_distance(param_in_buf, &(session->term.buffer[session->term.pos]), &(session->term.buffer[MAX_BUFLEN])) ;
                     //printf("WD=%d\n", w_distance);
                     if( (w_distance>0) && (w_distance<=param->numval) ) { 
+                        done=1;
                         if(param->val) {
                             /* Let's call custom callback */
                             p_matches=param->val(p_val, session->cookie);
@@ -499,6 +495,7 @@ static char **completion_matches( Clisession *session, const char *text, unsigne
             while( (param->name) && (!p_matches) ) {
                 if( (strlen(param->name)==0) && (param->val) ) {
                     int w_distance = word_distance(session->term.buffer, &(session->term.buffer[session->term.pos]), &(session->term.buffer[MAX_BUFLEN])) ;
+                    /* For now let's just focus on cases where default value is the first word after the command word */
                     if( w_distance == 1 ) {
                         /* Let's call customer callback */
                         p_matches=param->val(p_val, session->cookie);
@@ -512,22 +509,37 @@ static char **completion_matches( Clisession *session, const char *text, unsigne
         if(p_matches) {
             for(count=0; count<p_matches; ++count) {
                 if( (! (strncmp(to_complete, p_val[count], len) && to_complete) ) ) {
-                    if( (!retval) && !(retval = malloc( MAX_NUM_COMPL_ENTRIES * sizeof(char*)) ) ) {
+                    if( (!(*retval)) && !((*retval) = malloc( MAX_NUM_COMPL_ENTRIES * sizeof(char*)) ) ) {
                         for(i=0; i<p_matches;++i) {
                             free(p_val[i]);
                         }
-                        return NULL;
+                        goto exit;
                     }
-                    retval[matches++]=p_val[count];
+                    (*retval)[(*matches)++]=p_val[count];
                 } else {
                     free(p_val[count]);
                 }
             }
+            done=1;
         }
     }
+exit:
+    return done;
+
+}
+
+static char **completion_matches( Clisession *session, const char *text, unsigned int len )
+{
+    char *tempBuf;
+    char **retval=NULL;
+    int state=0, matches=0;
+    int done;
+
+
+    done=values_generator(session, &retval, &matches);
 
     /* Let's complete commands only in case of no parameters to complete */
-    if(!retval) {
+    if( !(done || retval) ) {
         do
         {
             tempBuf = command_generator( session, (const char*)text, len, state );
