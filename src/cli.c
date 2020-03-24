@@ -498,14 +498,17 @@ static char **completion_matches( Clisession *session, const char *text, unsigne
             param=session->active_cmd->param;
             while( (param->name) && (!p_matches) ) {
                 if( (strlen(param->name)==0) && (param->val) ) {
-                    /* Let's call customer callback */
-                    p_matches=param->val(p_val, session->cookie);
+                    int w_distance = word_distance(session->term.buffer, &(session->term.buffer[session->term.pos]), &(session->term.buffer[MAX_BUFLEN])) ;
+                    if( w_distance == 1 ) {
+                        /* Let's call customer callback */
+                        p_matches=param->val(p_val, session->cookie);
+                    }
                 } 
                 param++;
             } 
         }
 
-        /* If some values have been completed, print and free */
+        /* If some values have been completed, add to the list and free temp heap buffers */
         if(p_matches) {
             for(count=0; count<p_matches; ++count) {
                 if( (! (strncmp(to_complete, p_val[count], len) && to_complete) ) ) {
