@@ -26,40 +26,39 @@
 #include "climinal/session.h"
 
 
-static Cmdinfo *createcmdinfo  ( const Clisession *session, const Clicmd *cmd, char *next_data );
-static void    destroycmdinfo  ( Cmdinfo *cmdinfo );
-static void    dump_history    ( const Clisession *session );
-static int     word_distance   ( const char *start, const char *current, const char*endbuf );
+static Cmdinfo *createcmdinfo (const Clisession * session, const Clicmd * cmd, char *next_data);
+static void destroycmdinfo (Cmdinfo * cmdinfo);
+static void dump_history (const Clisession * session);
+static int word_distance (const char *start, const char *current, const char *endbuf);
 
 /* This function returns the address of next word in a buffer, giving also as output the strlen of the word */
-static char *next_word( const char *in, const char *in_end, unsigned int *len )
+static char *
+next_word (const char *in, const char *in_end, unsigned int *len)
 {
-    char *word_end      = NULL;
-    char *word_start    = NULL;
+    char *word_end = NULL;
+    char *word_start = NULL;
 
-    if (len)
-        *len=0;
+    if (len) {
+        *len = 0;
+    }
 
     /* Let's remove any trailing blankspace */
-    while( (in < in_end) && (*in == ' ') )
-    {
+    while ((in < in_end) && (*in == ' ')) {
         ++in;
     }
 
-    if( in < in_end )
-    {
+    if (in < in_end) {
 
         /* Let's search for the next blankspace of end of buffer */
-        word_end = strchr( in, ' ' );
-        if( !word_end )
-            word_end = strchr( in, '\0' );
+        word_end = strchr (in, ' ');
+        if (!word_end)
+            word_end = strchr (in, '\0');
 
-        if( word_end > in )
-        {
+        if (word_end > in) {
             /* We have a word! */
-            if( len )
+            if (len)
                 *len = word_end - in;
-            word_start = (char*)in;
+            word_start = (char *) in;
         }
     }
 
@@ -68,182 +67,173 @@ static char *next_word( const char *in, const char *in_end, unsigned int *len )
     return word_start;
 }
 
-static char *last_word( const char *in, const char *in_end, unsigned int *len )
+static char *
+last_word (const char *in, const char *in_end, unsigned int *len)
 {
-    char *word_end      = NULL;
-    char *word_start    = NULL;
+    char *word_end = NULL;
+    char *word_start = NULL;
 
-    word_end=(char*)in_end;
+    word_end = (char *) in_end;
 
     /* Let's find the last space char, as we need the last complete word */
-    while( (in < word_end) && (*(word_end-1) != ' ') ) {
+    while ((in < word_end) && (*(word_end - 1) != ' ')) {
         --word_end;
     }
 
     /* Let's remove any trailing blankspace */
-    while( (in < word_end) && (*(word_end-1) == ' ') )
-    {
+    while ((in < word_end) && (*(word_end - 1) == ' ')) {
         --word_end;
     }
 
-    word_start=word_end;
-    while( (in < word_start) && (*(word_start-1) != ' ') )
-    {
+    word_start = word_end;
+    while ((in < word_start) && (*(word_start - 1) != ' ')) {
         --word_start;
     }
 
-    if(len)
-        *len=word_end-word_start;
+    if (len) {
+        *len = word_end - word_start;
+    }
 
     /* Let's return what we have found (NULL if none) */
     /* printf("WS: %s\n", word_start); */
     return word_start;
-    
+
 }
 
-static inline int execute( const Clisession *session, const Clicmd *cmd, const char *line, char *next_data )  
+static inline int
+execute (const Clisession * session, const Clicmd * cmd, const char *line, char *next_data)
 {
-    int         retval      = CLIMINAL_NO_ERROR;
-    Cliparam    *param      = cmd->param;
-    Cmdinfo     *cmdinfo    = NULL;
-    Cmdparam    *defparam;
-    int         ok = 1;
-    int         defparam_req = 0;
+    int retval = CLIMINAL_NO_ERROR;
+    Cliparam *param = cmd->param;
+    Cmdinfo *cmdinfo = NULL;
+    Cmdparam *defparam;
+    int ok = 1;
+    int defparam_req = 0;
 
     /* First of all, we have to check whether the callback is registered */
-    if( cmd->cbk && line )
-    {
+    if (cmd->cbk && line) {
         /* Let's create the Cmdinfo structure */
-        cmdinfo = createcmdinfo( session, cmd, next_data );
+        cmdinfo = createcmdinfo (session, cmd, next_data);
 
-        if( cmdinfo )
-        {
+        if (cmdinfo) {
 
             /* Let's just check whether all the required parameters are there */
-            while( ok && param && param->name )
-            {
-                if( strlen(param->name) )
-                {
-                    if( param->required && strlen(param->name) && (!findparam(cmdinfo, param->name)) )
-                    {
+            while (ok && param && param->name) {
+                if (strlen (param->name)) {
+                    if (param->required && strlen (param->name) && (!findparam (cmdinfo, param->name))) {
                         ok = 0;
-                        fprintf(session->term.out, ">> MISSING PARAMETER: \"%s\"\n", param->name);
-                        retval=CLIMINAL_E_INVALID;
+                        fprintf (session->term.out, ">> MISSING PARAMETER: \"%s\"\n", param->name);
+                        retval = CLIMINAL_E_INVALID;
                     }
-                }
-                else if( (param->required) && !(cmdinfo->defval) )
-                {
+                } else if ((param->required) && !(cmdinfo->defval)) {
                     ok = 0;
-                    fprintf(session->term.out, ">> MISSING DEFAULT PARAMETER\n");
-                    retval=CLIMINAL_E_INVALID;
+                    fprintf (session->term.out, ">> MISSING DEFAULT PARAMETER\n");
+                    retval = CLIMINAL_E_INVALID;
                 }
-                if( ok )
-                {
+                if (ok) {
                     ++param;
                 }
             }
 
 
-            if( ok ) {
+            if (ok) {
                 /* Set back terminal to standard mode */
-                res_terminal( (Cliterm*) &session->term );
-                
+                res_terminal ((Cliterm *) & session->term);
+
                 /* All OK... let's execute the callback! */
-                retval = cmd->cbk(session->term.in, session->term.out, cmdinfo, line, session->cookie);
+                retval = cmd->cbk (session->term.in, session->term.out, cmdinfo, line, session->cookie);
 
                 /* Set back terminal to interactive mode */
-                set_terminal( (Cliterm*) &session->term );
+                set_terminal ((Cliterm *) & session->term);
 
                 /* In case user sets a new prompt value in command's callback, let's add it to the prompt stack */
-                if( (retval==CLIMINAL_NO_ERROR) && (strlen(cmdinfo->new_prompt)) && (cmd->subcontext) ) {
-                    strcpy(session->prompt_stack[(session->cur_depth)+1], cmdinfo->new_prompt);
+                if ((retval == CLIMINAL_NO_ERROR) && (strlen (cmdinfo->new_prompt)) && (cmd->subcontext)) {
+                    strcpy (session->prompt_stack[(session->cur_depth) + 1], cmdinfo->new_prompt);
                 }
             }
             /* Finally destroy the structure sent to the callback */
-            destroycmdinfo( cmdinfo ); 
+            destroycmdinfo (cmdinfo);
         }
     }
 
     return retval;
 }
 
-static Clicmd *find_active_cmd( Clisession *session, char **nextdata )
+static Clicmd *
+find_active_cmd (Clisession * session, char **nextdata)
 {
-    unsigned    int count = 0, cmdfound = 0, cmdlen = 0;
-    char        *name, *cmd;
-    char        *buf     = session->term.buffer;
-    const char  *end_in_buf  = buf+MAX_BUFLEN;
-    Clicmd      *ret_val = NULL;
-    Clicmd      *cmdlist = session->active_context->cmd;
+    unsigned int count = 0, cmdfound = 0, cmdlen = 0;
+    char *name, *cmd;
+    char *buf = session->term.buffer;
+    const char *end_in_buf = buf + MAX_BUFLEN;
+    Clicmd *ret_val = NULL;
+    Clicmd *cmdlist = session->active_context->cmd;
 
-    do
-    {
+    do {
         /* If we've already found a command, let's try with its subcommands */
-        if( ret_val != NULL )
+        if (ret_val != NULL)
             cmdlist = ret_val->subcmd;
 
         /* Let's search for the next word to find */
-        cmd = next_word( buf, end_in_buf, &cmdlen );
+        cmd = next_word (buf, end_in_buf, &cmdlen);
 
         /* In case there's no a new word, or in case our cursor is not positioned after the found word (+1 blank), let's exit */
-        if( !(cmd && cmdlist) )
+        if (!(cmd && cmdlist))
             goto exit;
 
 
         count = cmdfound = 0;
 
         /* Let's search for the desired entry in the selected command list */
-        do
-        {
+        do {
             name = cmdlist[count].name;
-            if(name)
+            if (name)
                 /* If they are the same string, we've found the right command */
-                if( (name) && (strlen(name)==cmdlen) && (!strncmp(name, cmd, cmdlen)) )
-                {
+                if ((name) && (strlen (name) == cmdlen) && (!strncmp (name, cmd, cmdlen))) {
                     ret_val = &(cmdlist[count]);
                     cmdfound = 1;
 
                     /* If this API was called with the "nextdata", we have to return also the pointer to the next data,
-                       tipically the pointer where to start searching for the parameters list. */
-                    if( nextdata )
-                        *nextdata   = cmd+cmdlen;
+                     * tipically the pointer where to start searching for the parameters list. */
+                    if (nextdata)
+                        *nextdata = cmd + cmdlen;
                 }
             count++;
-        }
-        while( (name != NULL) && (!cmdfound) );
+        } while ((name != NULL) && (!cmdfound));
 
         /* Let's move to the end of the word, in order to search for the next word */
-        buf += (cmdlen+1);
+        buf += (cmdlen + 1);
     }
-    while( cmdfound && ( (cmd+cmdlen) != (buf+session->term.pos) ));
+    while (cmdfound && ((cmd + cmdlen) != (buf + session->term.pos)));
 
 exit:
     return ret_val;
 }
 
-static Cliparam *find_active_param( Clisession *session )
+static Cliparam *
+find_active_param (Clisession * session)
 {
     char *next_data;
-    Cliparam *param, *active_param=NULL;
+    Cliparam *param, *active_param = NULL;
     char word[MAX_BUFLEN];
-    unsigned int len=0;
+    unsigned int len = 0;
     char *last;
 
-    if( !session->active_cmd ) {
-        session->active_cmd=find_active_cmd(session, NULL);
+    if (!session->active_cmd) {
+        session->active_cmd = find_active_cmd (session, NULL);
     }
 
-    last=last_word(session->term.buffer, session->term.buffer+session->term.pos, &len);
-    if(last){
-        strncpy(word, last, len);
+    last = last_word (session->term.buffer, session->term.buffer + session->term.pos, &len);
+    if (last) {
+        strncpy (word, last, len);
     }
-    word[len]='\0';
+    word[len] = '\0';
 
-    param=session->active_cmd->param;
+    param = session->active_cmd->param;
 
-    while(param && param->name && (!active_param)){
-        if(!strcmp(param->name, word)) {
-            active_param=param;
+    while (param && param->name && (!active_param)) {
+        if (!strcmp (param->name, word)) {
+            active_param = param;
         }
         param++;
     }
@@ -251,71 +241,70 @@ static Cliparam *find_active_param( Clisession *session )
     return active_param;
 }
 
-static char *get_main_cmd_offset( Clisession *session )
+static char *
+get_main_cmd_offset (Clisession * session)
 {
     char *c_ptr = session->term.buffer;
-    while( *c_ptr == ' ' )
-    {
+
+    while (*c_ptr == ' ') {
         c_ptr++;
     }
 
     return c_ptr;
 }
 
-static void get_main_cmd( Clisession *session, char *out_buf )
+static void
+get_main_cmd (Clisession * session, char *out_buf)
 {
-    int num=0;
-    char *c_ptr = get_main_cmd_offset(session);
+    int num = 0;
+    char *c_ptr = get_main_cmd_offset (session);
 
-    while ( (*c_ptr != ' ') && (*c_ptr != '\0') && (*c_ptr != '\n') )
-    {
-        out_buf[num++]=*c_ptr++;
+    while ((*c_ptr != ' ') && (*c_ptr != '\0') && (*c_ptr != '\n')) {
+        out_buf[num++] = *c_ptr++;
     }
-    out_buf[num]='\0';
+    out_buf[num] = '\0';
 }
 
-static char *command_generator_common ( Clisession *session, const char *text, int state)
+static char *
+command_generator_common (Clisession * session, const char *text, int state)
 {
     static int exit_matched, end_matched, bye_matched, history_matched;
-    int match=0;
-    char *name, *retval=NULL;
-    if(!state) {
+    int match = 0;
+    char *name, *retval = NULL;
+
+    if (!state) {
         bye_matched = end_matched = exit_matched = history_matched = 0;
     }
 
     /* Common commands */
-    if( !bye_matched )
-    {
-        name="bye";
-        if(!strncmp(name, text, strlen(text))) {
+    if (!bye_matched) {
+        name = "bye";
+        if (!strncmp (name, text, strlen (text))) {
             bye_matched = 1;
             match = 1;
             goto exit;
         }
     }
-    if( !history_matched )
-    {
-        name="history";
-        if(!strncmp(name, text, strlen(text))) {
+    if (!history_matched) {
+        name = "history";
+        if (!strncmp (name, text, strlen (text))) {
             history_matched = 1;
             match = 1;
             goto exit;
         }
     }
-    if( session->main_context->depth>1 ) {
-        if( !exit_matched  )
-        {
-            name="exit";
-            if(!strncmp(name, text, strlen(text))) {
+    if (session->main_context->depth > 1) {
+        if (!exit_matched) {
+            name = "exit";
+            if (!strncmp (name, text, strlen (text))) {
                 exit_matched = 1;
                 match = 1;
                 goto exit;
             }
         }
-        if( !end_matched  )
-        {
-            name="end";
-            if(!strncmp(name, text, strlen(text))) {
+        if (!end_matched) {
+            name = "end";
+            if (!strncmp (name, text, strlen (text))) {
                 end_matched = 1;
                 match = 1;
                 goto exit;
@@ -323,69 +312,64 @@ static char *command_generator_common ( Clisession *session, const char *text, i
         }
     }
 exit:
-    if(match) {
-        retval = strdup(name);
+    if (match) {
+        retval = strdup (name);
     }
     return retval;
 }
 
-static char *command_generator ( Clisession *session, const char *text, int textlen, int state)
+static char *
+command_generator (Clisession * session, const char *text, int textlen, int state)
 {
-    static int      list_index, param_num, subcmd_num;
-    static Clicmd   *cmdlist;
-    int             count;
-    char            *name=NULL, *retval=NULL, *nextname=NULL;
-    char            buf[MAX_STRLEN+2];
-    const char      *end_in_buf  = session->term.buffer+MAX_BUFLEN;
+    static int list_index, param_num, subcmd_num;
+    static Clicmd *cmdlist;
+    int count;
+    char *name = NULL, *retval = NULL, *nextname = NULL;
+    char buf[MAX_STRLEN + 2];
+    const char *end_in_buf = session->term.buffer + MAX_BUFLEN;
 
     count = 0;
 
     /*
-       If this is a new word to complete, initialize now.  This includes
-       saving the length of TEXT for efficiency, and initializing the index
-       variable to 0.
+     * If this is a new word to complete, initialize now.  This includes
+     * saving the length of TEXT for efficiency, and initializing the index
+     * variable to 0.
      */
-    if (!state)
-    {
+    if (!state) {
         /* This means we are starting a new list... so let's initialize all variables */
-        list_index  = 0;
-        param_num   = subcmd_num = 0;
-        cmdlist     = session->active_context->cmd;
+        list_index = 0;
+        param_num = subcmd_num = 0;
+        cmdlist = session->active_context->cmd;
 
         char *next_data;
 
         /* Let's understand whether we have a reasonable word to complete */
-        session->active_cmd = find_active_cmd(session, &next_data);
+        session->active_cmd = find_active_cmd (session, &next_data);
 
 
-        if( (session->active_cmd) )
-        {
-            if( *next_data==' ' ) { 
+        if ((session->active_cmd)) {
+            if (*next_data == ' ') {
                 /* The list of commands to be completed is active_cmd->subcmd */
                 cmdlist = session->active_cmd->subcmd;
 
                 /* Let's count, only the first time, the number of parameters */
-                if( session->active_cmd->param )
-                {
-                    while( session->active_cmd->param[count++].name )
-                    {
+                if (session->active_cmd->param) {
+                    while (session->active_cmd->param[count++].name) {
                         param_num++;
                     }
                 }
             }
-        }
-        else
-        {
+        } else {
             /* 
-               If no active commands and there's a word before the one we are completing,
-               let's exit without completing anything
+             * If no active commands and there's a word before the one we are completing,
+             * let's exit without completing anything
              */
-            nextname = next_word(session->term.buffer, end_in_buf, NULL);
-            if( !nextname )
+            nextname = next_word (session->term.buffer, end_in_buf, NULL);
+            if (!nextname)
                 goto exit;
 
-            name = strchr( nextname, ' ' );
-            if( name && ( name <= text ) )
+            name = strchr (nextname, ' ');
+            if (name && (name <= text))
                 goto exit;
 
             /* Because there's no active command, let's set param_num to 0 to avoid useless param completion */
@@ -393,46 +377,41 @@ static char *command_generator ( Clisession *session, const char *text, int text
         }
 
         /* Now, let's count the number of commands */
-        if( cmdlist )
-        {
+        if (cmdlist) {
             count = 0;
-            while( cmdlist[count++].name )
-            {
+            while (cmdlist[count++].name) {
                 subcmd_num++;
             }
         }
     }
 
-    if( !session->active_cmd ) {
-        retval=command_generator_common(session, text, state);
+    if (!session->active_cmd) {
+        retval = command_generator_common (session, text, state);
     }
 
-    if(!retval) {
+    if (!retval) {
         /* Ready to check parameters */
-        while( (list_index < (param_num+subcmd_num)) && !retval )
-        {
-            if( list_index < param_num )
+        while ((list_index < (param_num + subcmd_num)) && !retval) {
+            if (list_index < param_num)
                 name = session->active_cmd->param[list_index].name;
-            else if( list_index < (param_num+subcmd_num) )
-                name = cmdlist[(list_index)-param_num].name;
+            else if (list_index < (param_num + subcmd_num))
+                name = cmdlist[(list_index) - param_num].name;
             else {
-                name=NULL;
+                name = NULL;
                 goto exit;
             }
 
             list_index++;
 
-            if ( strncmp (name, text, textlen) == 0 )
-            {
+            if (strncmp (name, text, textlen) == 0) {
                 /*  
-                    Checking if the whole word is already present in the command
-                    Note that words containing the searched one don't match
+                 * Checking if the whole word is already present in the command
+                 * Note that words containing the searched one don't match
                  */
-                sprintf(buf,"%s%c", name, ' ');
-                if( ! strstr(session->term.buffer, buf) )
-                {
-                    retval = malloc(strlen(name)+1);
-                    strcpy(retval, name);
+                sprintf (buf, "%s%c", name, ' ');
+                if (!strstr (session->term.buffer, buf)) {
+                    retval = malloc (strlen (name) + 1);
+                    strcpy (retval, name);
                     goto exit;
                 }
             }
@@ -444,84 +423,93 @@ exit:
     return retval;
 }
 
-static char **values_generator( Clisession *session, int *done, int *matches )
+static char **
+values_generator (Clisession * session, int *done, int *matches)
 {
-    char **retval=NULL;
-    *done=0;
+    char **retval = NULL;
+
+    *done = 0;
     /* Let's first try to understand whether there is a param value to complete */
-    if( (session->active_cmd) && (session->active_cmd->param) )
-    {
+    if ((session->active_cmd) && (session->active_cmd->param)) {
         /* Let's complete param values if needed */
         char *last, *to_complete, word[MAX_BUFLEN], word_to_complete[MAX_BUFLEN];
+
         /* Potential matches */
-        int p_matches=0, count;
+        int p_matches = 0, count;
         char *p_val[MAX_NUM_COMPL_ENTRIES];
-        unsigned int len=0, i;
-        last=last_word(session->term.buffer, session->term.buffer+session->term.pos, &len);
-        strncpy(word, last, len);
-        word[len]='\0';
+        unsigned int len = 0, i;
+
+        last = last_word (session->term.buffer, session->term.buffer + session->term.pos, &len);
+        strncpy (word, last, len);
+        word[len] = '\0';
 
         /* Let's find the partial word to be completed */
-        to_complete=next_word(last+len, session->term.buffer+session->term.pos, &len);
-        if(len) {
-            strncpy(word_to_complete, to_complete, len);
+        to_complete = next_word (last + len, session->term.buffer + session->term.pos, &len);
+        if (len) {
+            strncpy (word_to_complete, to_complete, len);
         }
-        word_to_complete[len]='\0';
+        word_to_complete[len] = '\0';
 
         /* Step 1: looking at regular params first */
-        Cliparam *param=session->active_cmd->param;
-        while( (param->name) && (!p_matches) ) {
-            if( strlen(param->name)>0 ) {
-                char *param_in_buf=strstr(session->term.buffer, param->name);
-                if(param_in_buf) {
-                    int w_distance = word_distance(param_in_buf, &(session->term.buffer[session->term.pos]), &(session->term.buffer[MAX_BUFLEN])) ;
+        Cliparam *param = session->active_cmd->param;
+
+        while ((param->name) && (!p_matches)) {
+            if (strlen (param->name) > 0) {
+                char *param_in_buf = strstr (session->term.buffer, param->name);
+
+                if (param_in_buf) {
+                    int w_distance =
+                        word_distance (param_in_buf, &(session->term.buffer[session->term.pos]),
+                                &(session->term.buffer[MAX_BUFLEN]));
                     //printf("WD=%d\n", w_distance);
-                    if( (w_distance>0) && (w_distance<=param->numval) ) { 
-                        *done=1;
-                        if(param->val) {
+                    if ((w_distance > 0) && (w_distance <= param->numval)) {
+                        *done = 1;
+                        if (param->val) {
                             /* Let's call custom callback */
-                            p_matches=param->val(p_val, session->cookie);
+                            p_matches = param->val (p_val, session->cookie);
                         } else {
                             goto exit;
                         }
                     }
-                } 
-            } 
+                }
+            }
             param++;
-        } 
+        }
 
         /* Step 2: if no regular param found, completing value for default param */
-        if(!p_matches) {
-            param=session->active_cmd->param;
-            while( (param->name) && (!p_matches) ) {
-                if( (strlen(param->name)==0) && (param->val) ) {
-                    int w_distance = word_distance(session->term.buffer, &(session->term.buffer[session->term.pos]), &(session->term.buffer[MAX_BUFLEN])) ;
+        if (!p_matches) {
+            param = session->active_cmd->param;
+            while ((param->name) && (!p_matches)) {
+                if ((strlen (param->name) == 0) && (param->val)) {
+                    int w_distance =
+                        word_distance (session->term.buffer, &(session->term.buffer[session->term.pos]),
+                                &(session->term.buffer[MAX_BUFLEN]));
                     /* For now let's just focus on cases where default value is the first word after the command word */
-                    if( w_distance == 1 ) {
+                    if (w_distance == 1) {
                         /* Let's call customer callback */
-                        p_matches=param->val(p_val, session->cookie);
+                        p_matches = param->val (p_val, session->cookie);
                     }
-                } 
+                }
                 param++;
-            } 
+            }
         }
 
         /* If some values have been completed, add to the list and free temp heap buffers */
-        if(p_matches) {
-            for(count=0; count<p_matches; ++count) {
-                if( (! (strncmp(to_complete, p_val[count], len) && to_complete) ) ) {
-                    if( (!retval) && !(retval = malloc( MAX_NUM_COMPL_ENTRIES * sizeof(char*)) ) ) {
-                        for(i=0; i<p_matches;++i) {
-                            free(p_val[i]);
+        if (p_matches) {
+            for (count = 0; count < p_matches; ++count) {
+                if ((!(strncmp (to_complete, p_val[count], len) && to_complete))) {
+                    if ((!retval) && !(retval = malloc (MAX_NUM_COMPL_ENTRIES * sizeof (char *)))) {
+                        for (i = 0; i < p_matches; ++i) {
+                            free (p_val[i]);
                         }
                         goto exit;
                     }
-                    retval[(*matches)++]=p_val[count];
+                    retval[(*matches)++] = p_val[count];
                 } else {
-                    free(p_val[count]);
+                    free (p_val[count]);
                 }
             }
-            *done=1;
+            *done = 1;
         }
     }
 exit:
@@ -529,92 +517,88 @@ exit:
 
 }
 
-static char **completion_matches( Clisession *session, const char *text, unsigned int len )
+static char **
+completion_matches (Clisession * session, const char *text, unsigned int len)
 {
     char *tempBuf;
     char **retval;
-    int state=0, matches=0;
-    int done=0;
+    int state = 0, matches = 0;
+    int done = 0;
 
 
-    retval=values_generator(session, &done, &matches);
+    retval = values_generator (session, &done, &matches);
 
     /* Let's complete commands only in case of no parameters to complete */
-    if( !(done || retval) ) {
-        do
-        {
-            tempBuf = command_generator( session, (const char*)text, len, state );
-            if( tempBuf )
-            {
-                if( !retval )
-                {
-                    retval = malloc( MAX_NUM_COMPL_ENTRIES * sizeof(char*) );
-                    if( !retval )
+    if (!(done || retval)) {
+        do {
+            tempBuf = command_generator (session, (const char *) text, len, state);
+            if (tempBuf) {
+                if (!retval) {
+                    retval = malloc (MAX_NUM_COMPL_ENTRIES * sizeof (char *));
+                    if (!retval)
                         return NULL;
                     state = 1;
                 }
                 retval[matches++] = tempBuf;
             }
         }
-        while( tempBuf );
+        while (tempBuf);
     }
 
 exit:
     /* The matching array MUST be NULL terminated */
-    if( matches )
+    if (matches)
         retval[matches] = NULL;
 
     return retval;
 }
 
-static char **completion (Clisession *session, const char *text, int start, int end)
+static char **
+completion (Clisession * session, const char *text, int start, int end)
 {
     char **matches = NULL;
 
     /* Let's understand whether we have a reasonable word to complete */
-    session->active_cmd = find_active_cmd(session, NULL);
+    session->active_cmd = find_active_cmd (session, NULL);
 
-/*
-    char *last;
-    unsigned int len;
-    last=last_word(session->term.buffer, session->term.buffer+session->term.len, &len);
-    strncpy(word, last, len);
-    word[len]='\0';
-    printf("last word: \"%s\"\n", word); 
-*/
+    /*
+       char *last;
+       unsigned int len;
+       last=last_word(session->term.buffer, session->term.buffer+session->term.len, &len);
+       strncpy(word, last, len);
+       word[len]='\0';
+       printf("last word: \"%s\"\n", word); 
+     */
     /* Ok... let's complete it! */
-    matches = completion_matches (session, text, end-start);
+    matches = completion_matches (session, text, end - start);
 
     return (matches);
 }
 
-static int parsecommon( Clisession *session, const char *main_cmd )
+static int
+parsecommon (Clisession * session, const char *main_cmd)
 {
-    int retval  = CLIMINAL_NO_ERROR;
+    int retval = CLIMINAL_NO_ERROR;
     int count;
 
-    if( !strcmp(main_cmd, "bye") ) {
+    if (!strcmp (main_cmd, "bye")) {
         retval = CLIMINAL_E_EXIT;
-    }
-    else if( (session->main_context->depth>1) && (!strcmp(main_cmd, "exit")) ) {
-        if( session->active_context->father ) {
-            session->active_context=session->active_context->father;
-            session->prompt_stack[((session->cur_depth)--)][0]='\0';
-        }
-    }
-    else if( (session->main_context->depth>1) && (!strcmp(main_cmd, "end")) ) {
-        while( session->active_context->father != NULL ) {
+    } else if ((session->main_context->depth > 1) && (!strcmp (main_cmd, "exit"))) {
+        if (session->active_context->father) {
             session->active_context = session->active_context->father;
-            for(count=1; count<session->cur_depth; ++count) {
-                session->prompt_stack[count][0]='\0';
-            }
-            session->cur_depth=0;
+            session->prompt_stack[((session->cur_depth)--)][0] = '\0';
         }
-    }
-    else if( !strcmp(main_cmd, "history") ) {
-        dump_history(session);
-    }
-    else {
+    } else if ((session->main_context->depth > 1) && (!strcmp (main_cmd, "end"))) {
+        while (session->active_context->father != NULL) {
+            session->active_context = session->active_context->father;
+            for (count = 1; count < session->cur_depth; ++count) {
+                session->prompt_stack[count][0] = '\0';
+            }
+            session->cur_depth = 0;
+        }
+    } else if (!strcmp (main_cmd, "history")) {
+        dump_history (session);
+    } else {
         retval = CLIMINAL_E_NOT_FOUND;
     }
     return retval;
@@ -623,289 +607,280 @@ static int parsecommon( Clisession *session, const char *main_cmd )
 /* Calculates the distance in terms of number of words between the two pointers */
 /* start: pointer to the left word in buffer */
 /* current: pointer to the current (right) word in buffer */
-static int word_distance( const char *start, const char *current, const char *endbuf ) 
+static int
+word_distance (const char *start, const char *current, const char *endbuf)
 {
     int negative;
     char *left, *right, *curr, *next;
-    int count=0;
+    int count = 0;
     unsigned int len;
 
-    if( start<current ) {
-        left=(char*)start;
-        right=(char*)current;
-        negative=0;
+    if (start < current) {
+        left = (char *) start;
+        right = (char *) current;
+        negative = 0;
     } else {
-        left=(char*)current;
-        right=(char*)start;
-        negative=1;
+        left = (char *) current;
+        right = (char *) start;
+        negative = 1;
     }
 
-    next=left;
-    next_word(next, endbuf, &len);
+    next = left;
+    next_word (next, endbuf, &len);
     //printf("\nLEFT:%X CURR:%X NEXT:%X RIGHT:%X ENDBUF:%X\n", left, curr, next, right, endbuf);
 
-    do{
-        if( next+len<right ) {
+    do {
+        if (next + len < right) {
             count++;
         }
-        curr=next;
-        next=next_word(curr+len, endbuf, &len);
+        curr = next;
+        next = next_word (curr + len, endbuf, &len);
         //printf("\nLEFT:%X CURR:%X NEXT:%X RIGHT:%X ENDBUF:%X\n", left, curr, next, right, endbuf);
         //printf("STRING: %s\n", left);
-    } while( (next) && (next<right) && (curr<next) );
+    } while ((next) && (next < right) && (curr < next));
 
-    if(negative) {
-        count=-count;
+    if (negative) {
+        count = -count;
     }
-
     //printf("COUNT: %d\n", count);
     return count;
 
 }
 
-static int parseline( Clisession *session )
+static int
+parseline (Clisession * session)
 {
-    int      retval  = CLIMINAL_NO_ERROR;
-    Clicmd          *cmd    = NULL;
-    char            *buf    = session->term.buffer;
-    char            main_cmd[MAX_STRLEN] = "";
-    char            *next_data;
-    int             bufempty;
+    int retval = CLIMINAL_NO_ERROR;
+    Clicmd *cmd = NULL;
+    char *buf = session->term.buffer;
+    char main_cmd[MAX_STRLEN] = "";
+    char *next_data;
+    int bufempty;
 
     /* If no runtime prompt change, let's just use this comment's prompt */
-    if(!strlen((session->prompt_stack[session->cur_depth]))) {
-       strcpy(session->prompt_stack[session->cur_depth], session->active_context->prompt); 
+    if (!strlen ((session->prompt_stack[session->cur_depth]))) {
+        strcpy (session->prompt_stack[session->cur_depth], session->active_context->prompt);
     }
 
     /* Get the new line */
-    if(readline( session, strlen(session->prompt_stack[session->cur_depth])?(session->prompt_stack[session->cur_depth]):(session->active_context->prompt) )) {
-        retval=CLIMINAL_E_EXIT;
+    if (readline
+            (session,
+             strlen (session->prompt_stack[session->cur_depth]) ? (session->prompt_stack[session->cur_depth]) : (session->
+                 active_context->
+                 prompt))) {
+        retval = CLIMINAL_E_EXIT;
         goto exit;
     }
-    bufempty=(strlen(buf))?0:1;
+    bufempty = (strlen (buf)) ? 0 : 1;
 
-    if( !bufempty  )
-    {
+    if (!bufempty) {
         /* If a command, do it!!! */
-        get_main_cmd( session, main_cmd );
-        if( strlen(main_cmd) > 0 )
-        {
+        get_main_cmd (session, main_cmd);
+        if (strlen (main_cmd) > 0) {
             /* Let's check if we are trying to run a command in history */
-            if( strlen(main_cmd)>1 && main_cmd[0] == '!' ) {
+            if (strlen (main_cmd) > 1 && main_cmd[0] == '!') {
                 unsigned int num, entry_id;
                 Clihistory *hist;
-                if( strlen(main_cmd) > 1 ) {
+
+                if (strlen (main_cmd) > 1) {
                     /* Let's check if there are other word in the buffer */
-                    char *word_in_buffer=strstr(session->term.buffer, main_cmd);
-                    if(next_word(&(word_in_buffer[strlen(main_cmd)]), session->term.buffer+MAX_BUFLEN, NULL)) {
-                        fprintf(session->term.out, ">>SYNTAX ERROR\n");
+                    char *word_in_buffer = strstr (session->term.buffer, main_cmd);
+
+                    if (next_word (&(word_in_buffer[strlen (main_cmd)]), session->term.buffer + MAX_BUFLEN, NULL)) {
+                        fprintf (session->term.out, ">>SYNTAX ERROR\n");
                         return CLIMINAL_NO_ERROR;
                     }
 
-                    hist=&(session->term.history);
-                    num=strtol( &(main_cmd[1]), NULL, 10 );
-                    if( num<=0 || (num >= (hist->cmdnum-1)) || (hist->cmdnum>(hist->size+1) && num<(hist->cmdnum-(hist->size))) ) {
-                        fprintf(session->term.out, ">>COMMAND NUMBER %u NOT AVAILABLE\n", num);
+                    hist = &(session->term.history);
+                    num = strtol (&(main_cmd[1]), NULL, 10);
+                    if (num <= 0 || (num >= (hist->cmdnum - 1))
+                            || (hist->cmdnum > (hist->size + 1) && num < (hist->cmdnum - (hist->size)))) {
+                        fprintf (session->term.out, ">>COMMAND NUMBER %u NOT AVAILABLE\n", num);
                         return CLIMINAL_NO_ERROR;
                     }
-                    entry_id=num%(hist->size+1);
+                    entry_id = num % (hist->size + 1);
 
-                    memset( session->term.buffer, '\0', sizeof(session->term.buffer) );
-                    strcpy(session->term.buffer, hist->entry[entry_id]);
-                    session->term.len=strlen(hist->entry[entry_id]);
+                    memset (session->term.buffer, '\0', sizeof (session->term.buffer));
+                    strcpy (session->term.buffer, hist->entry[entry_id]);
+                    session->term.len = strlen (hist->entry[entry_id]);
 
                     /* Let's re-evaluate main_cmd, as we have changed the content of term.buffer */
-                    get_main_cmd( session, main_cmd );
+                    get_main_cmd (session, main_cmd);
 
                     /* Printing the whole command to be repeated */
-                    fprintf(session->term.out, " %s\n", hist->entry[entry_id]);
+                    fprintf (session->term.out, " %s\n", hist->entry[entry_id]);
                 }
             }
 
-            if( (retval = parsecommon(session, main_cmd)) == CLIMINAL_E_NOT_FOUND ) {
-                if( ( cmd=find_active_cmd(session, &next_data) ) ) {
+            if ((retval = parsecommon (session, main_cmd)) == CLIMINAL_E_NOT_FOUND) {
+                if ((cmd = find_active_cmd (session, &next_data))) {
                     /* Execute the callback all the cases */
-                    retval = execute(session, cmd, buf, next_data) ;
+                    retval = execute (session, cmd, buf, next_data);
 
                     /* If it's only a context change, and no errors in callback, do it!!! */
-                    if( cmd->subcontext && CLIMINAL_SUCCESS(retval) ) {
-                        ((Clicontext*)(cmd->subcontext))->father=session->active_context;
-                        session->active_context = ((Clicontext*)(cmd->subcontext));
+                    if (cmd->subcontext && CLIMINAL_SUCCESS (retval)) {
+                        ((Clicontext *) (cmd->subcontext))->father = session->active_context;
+                        session->active_context = ((Clicontext *) (cmd->subcontext));
                         (session->cur_depth)++;
                     }
-                    
+
                 } else {
-                    fprintf(session->term.out, ">> COMMAND NOT FOUND\n");
+                    fprintf (session->term.out, ">> COMMAND NOT FOUND\n");
                 }
             }
         }
-        add_history( &(session->term.history), buf );
-        session->term.history.entry[session->term.history.newid][0]='\0';
+        add_history (&(session->term.history), buf);
+        session->term.history.entry[session->term.history.newid][0] = '\0';
     }
-exit:    
+exit:
     return retval;
 }
 
-int climinal_main(const FILE *in, FILE *out, Clihandle *handle, void *cookie)
+int
+climinal_main (const FILE * in, FILE * out, Clihandle * handle, void *cookie)
 {
     int exit = CLIMINAL_NO_ERROR;
-    Clisession *session=malloc(sizeof(Clisession));
+    Clisession *session = malloc (sizeof (Clisession));
 
-    if(!session)
+    if (!session)
         return 1;
 
-    initsession( session, handle, in, out, cookie );
-    setcompleter( session, completion );
+    initsession (session, handle, in, out, cookie);
+    setcompleter (session, completion);
 
     /* Adding an extra empty line to be used as a separator */
-    add_history( &(session->term.history), "" ); 
+    add_history (&(session->term.history), "");
 
-    do
-    {
-        exit = parseline(session);
-    }
-    while( exit != CLIMINAL_E_EXIT );
+    do {
+        exit = parseline (session);
+    } while (exit != CLIMINAL_E_EXIT);
 
-    res_terminal( &(session->term) );
+    res_terminal (&(session->term));
 
-    endsession(session);
-    free(session);
+    endsession (session);
+    free (session);
 
     return 0;
 }
 
-static void printusage( Clisession *session, Clicmd *cmd )
+static void
+printusage (Clisession * session, Clicmd * cmd)
 {
     int count = 0, i, maxparamlen, len, isdefval, numofblanks;
-    const char defstring[]="(default)";
-    Cliparam *param=NULL;
-    Clicmd   *subcmd=NULL;
+    const char defstring[] = "(default)";
+    Cliparam *param = NULL;
+    Clicmd *subcmd = NULL;
 
     /* Parameters */
-    if( cmd->param )
-    {
-        fprintf( session->term.out, "\nPARAMETERS:\n");
+    if (cmd->param) {
+        fprintf (session->term.out, "\nPARAMETERS:\n");
 
         /* Let's do a first loop to calculate the longest parameter name */
-        maxparamlen=strlen(defstring);
+        maxparamlen = strlen (defstring);
         param = &(cmd->param[0]);
-        while( param->name )
-        {
-            len=strlen( param->name );
-            if(len>maxparamlen) 
-            {
-                maxparamlen=len;
+        while (param->name) {
+            len = strlen (param->name);
+            if (len > maxparamlen) {
+                maxparamlen = len;
             }
             param = &(cmd->param[++count]);
         }
 
-        count=0;
+        count = 0;
         param = &(cmd->param[count]);
-        while( param->name )
-        {
-            isdefval = (strlen(param->name)==0);
-            fprintf( session->term.out, " - %s", (isdefval)? defstring:param->name );
+        while (param->name) {
+            isdefval = (strlen (param->name) == 0);
+            fprintf (session->term.out, " - %s", (isdefval) ? defstring : param->name);
 
-            if( isdefval ) 
-            {
-                if( maxparamlen>strlen(defstring) ) 
-                {
-                    numofblanks = maxparamlen - strlen(defstring);
-                }
-                else
-                {
+            if (isdefval) {
+                if (maxparamlen > strlen (defstring)) {
+                    numofblanks = maxparamlen - strlen (defstring);
+                } else {
                     numofblanks = 1;
                 }
+            } else {
+                numofblanks = maxparamlen - strlen (param->name);
             }
-            else
-            {
-                numofblanks = maxparamlen-strlen(param->name);
-            }
-            for( i=0; i<numofblanks; ++i )
-            {
-                fprintf( session->term.out, " ");
+            for (i = 0; i < numofblanks; ++i) {
+                fprintf (session->term.out, " ");
             }
 
-            if( isdefval )
-            {
-                fprintf( session->term.out, "%s\n", (param->required)?"< required >":"");
+            if (isdefval) {
+                fprintf (session->term.out, "%s\n", (param->required) ? "< required >" : "");
+            } else {
+                fprintf (session->term.out, " < %svalues=%u >\n", (param->required) ? "required, " : "", param->numval);
             }
-            else
-            {
-                fprintf( session->term.out, " < %svalues=%u >\n", (param->required) ? "required, ":"", param->numval );
-            }
-            
+
             param = &(cmd->param[++count]);
         }
     }
 
     /* Subcommands */
-    if( cmd->subcmd )
-    {
+    if (cmd->subcmd) {
         count = 0;
-        fprintf( session->term.out, "\nSUBCOMMANDS:\n");
+        fprintf (session->term.out, "\nSUBCOMMANDS:\n");
 
         subcmd = &(cmd->subcmd[count]);
-        while( subcmd->name )
-        {
-            fprintf( session->term.out, " - %s \n", subcmd->name );
+        while (subcmd->name) {
+            fprintf (session->term.out, " - %s \n", subcmd->name);
             subcmd = &(cmd->subcmd[++count]);
         }
     }
 }
 
-static inline void printcommoncmds( Clisession *session ) 
+static inline void
+printcommoncmds (Clisession * session)
 {
-    if( session->main_context->depth > 1 ) {
-        fprintf( session->term.out, "COMMON COMMANDS:\n" );
+    if (session->main_context->depth > 1) {
+        fprintf (session->term.out, "COMMON COMMANDS:\n");
     }
-    fprintf( session->term.out, "%s - %s\n", "bye    ", "exit from the application" );
-    if( session->main_context->depth > 1 ) {
-        fprintf( session->term.out, "%s - %s\n", "end    ", "back to main context" );
-        fprintf( session->term.out, "%s - %s\n", "exit   ", "back to previous context" );
+    fprintf (session->term.out, "%s - %s\n", "bye    ", "exit from the application");
+    if (session->main_context->depth > 1) {
+        fprintf (session->term.out, "%s - %s\n", "end    ", "back to main context");
+        fprintf (session->term.out, "%s - %s\n", "exit   ", "back to previous context");
     }
-    fprintf( session->term.out, "%s - %s\n", "history", "show command history" );
+    fprintf (session->term.out, "%s - %s\n", "history", "show command history");
 }
 
-static inline void printallcmd( Clisession *session )
+static inline void
+printallcmd (Clisession * session)
 {
     Clicmd *cmd = session->active_context->cmd;
-    while( cmd && cmd->name )
-    {
-        fprintf( session->term.out, "%s - %s\n", cmd->name, cmd->brief );
+
+    while (cmd && cmd->name) {
+        fprintf (session->term.out, "%s - %s\n", cmd->name, cmd->brief);
         ++cmd;
     }
-    printcommoncmds(session);
+    printcommoncmds (session);
 }
 
-void printhelp( Clisession *session )
+void
+printhelp (Clisession * session)
 {
     Clicmd *cmd;
     Cliparam *param;
 
-    cmd = find_active_cmd(session, NULL);
-    if( cmd && cmd->help && cmd->brief ) {
-        param=find_active_param(session);
+    cmd = find_active_cmd (session, NULL);
+    if (cmd && cmd->help && cmd->brief) {
+        param = find_active_param (session);
         /* In case we have a parameter, let's show the parameter description, otherwise let's show the full command help */
-        if(param && (strlen(param->description)>0)) {
-            fprintf(session->term.out, "PARAMETER: %s\n  %s\n", param->name, param->description);
+        if (param && (strlen (param->description) > 0)) {
+            fprintf (session->term.out, "PARAMETER: %s\n  %s\n", param->name, param->description);
         } else {
             /* Command name */
-            fprintf( session->term.out, "\nCOMMAND:\n%s - %s\n", cmd->name, cmd->brief );
+            fprintf (session->term.out, "\nCOMMAND:\n%s - %s\n", cmd->name, cmd->brief);
 
             /* First of all. let's print the command usage */
-            printusage( session, cmd );
+            printusage (session, cmd);
 
             /* At the end, let's print the command help string */
-            fprintf(session->term.out, "\nDESCRIPTION:\n%s\n\n", cmd->help);
+            fprintf (session->term.out, "\nDESCRIPTION:\n%s\n\n", cmd->help);
         }
+    } else {
+        printallcmd (session);
     }
-    else
-    {
-        printallcmd( session );
-    }
-    fprintf( session->term.out, "%s> %s", session->prompt_stack[session->cur_depth], session->term.buffer );
-    CURS_L( session->term.out, (session->term.len)-(session->term.pos));
+    fprintf (session->term.out, "%s> %s", session->prompt_stack[session->cur_depth], session->term.buffer);
+    CURS_L (session->term.out, (session->term.len) - (session->term.pos));
 }
 
 /*
@@ -913,14 +888,13 @@ void printhelp( Clisession *session )
    callbacks writer
  */
 
-static Cliparam *findparam_cmd( const Clicmd *cmd, const char *paramname, int paramlen)
+static Cliparam *
+findparam_cmd (const Clicmd * cmd, const char *paramname, int paramlen)
 {
     Cliparam *param = cmd->param;
 
-    while( param && param->name )
-    {
-        if( !strncmp( param->name, paramname, paramlen ) )
-        {
+    while (param && param->name) {
+        if (!strncmp (param->name, paramname, paramlen)) {
             return param;
         }
         param++;
@@ -928,70 +902,61 @@ static Cliparam *findparam_cmd( const Clicmd *cmd, const char *paramname, int pa
     return NULL;
 }
 
-static Cmdinfo *createcmdinfo( const Clisession *session, const Clicmd *cmd, char *next_data )
+static Cmdinfo *
+createcmdinfo (const Clisession * session, const Clicmd * cmd, char *next_data)
 {
     /* "current" is the pointer representing the current iterator in the input buffer */
-    Cliparam        *param;
-    unsigned int    curlen=0, parnum, valnum, count, param_found, defval_found=0;
-    Cmdinfo         *cmdinfo;
-    const char      *end_in_buf     = session->term.buffer+MAX_BUFLEN;
-    char            *current        = next_data;
+    Cliparam *param;
+    unsigned int curlen = 0, parnum, valnum, count, param_found, defval_found = 0;
+    Cmdinfo *cmdinfo;
+    const char *end_in_buf = session->term.buffer + MAX_BUFLEN;
+    char *current = next_data;
 
-    cmdinfo = malloc( sizeof(Cmdinfo) );
-    if( ! cmdinfo )
+    cmdinfo = malloc (sizeof (Cmdinfo));
+    if (!cmdinfo)
         goto exit;
 
     /* All pointers to NULL and fields to ZERO */
-    memset( cmdinfo, 0x0, sizeof(Cmdinfo) );
+    memset (cmdinfo, 0x0, sizeof (Cmdinfo));
 
     /* With this command, we both take the active command and the start of the buffer for parameters lookup */
 
-    do
-    {
-        current = next_word( current+curlen, end_in_buf, &curlen );
+    do {
+        current = next_word (current + curlen, end_in_buf, &curlen);
 
-        if( curlen )    
-        {
+        if (curlen) {
             /* As a first step, let's search for a parameter with the "current" name */
-            parnum=0;
-            param_found=cmdinfo->paramnum;
+            parnum = 0;
+            param_found = cmdinfo->paramnum;
 
-            do
-            {
+            do {
                 param = &(cmd->param[parnum]);
-                if( param && param->name )
-                {
-                    if( strlen(param->name) ) 
-                    {
-                        if( (curlen==strlen(param->name)) && !strncmp(current, param->name, strlen(param->name)) )
-                        {
+                if (param && param->name) {
+                    if (strlen (param->name)) {
+                        if ((curlen == strlen (param->name)) && !strncmp (current, param->name, strlen (param->name))) {
                             valnum = count = 0;
 
                             /* It's good, we've found a parameter. So let's add it to the output structure (remember to free!!!) */
-                            cmdinfo->param[cmdinfo->paramnum] = malloc( sizeof(Cmdparam) );
-                            memset( cmdinfo->param[cmdinfo->paramnum], 0x0, sizeof(Cmdparam) );
+                            cmdinfo->param[cmdinfo->paramnum] = malloc (sizeof (Cmdparam));
+                            memset (cmdinfo->param[cmdinfo->paramnum], 0x0, sizeof (Cmdparam));
 
-                            cmdinfo->param[cmdinfo->paramnum]->name = malloc(strlen(param->name)+1);
-                            strcpy(cmdinfo->param[cmdinfo->paramnum]->name, param->name);
+                            cmdinfo->param[cmdinfo->paramnum]->name = malloc (strlen (param->name) + 1);
+                            strcpy (cmdinfo->param[cmdinfo->paramnum]->name, param->name);
 
                             /* Let's add values if needed */
-                            while( (count < param->numval) && (count++ == valnum) )
-                            {
+                            while ((count < param->numval) && (count++ == valnum)) {
                                 /* The next word is the value of the given parameter */
-                                current = next_word( current+curlen, end_in_buf, &curlen );
+                                current = next_word (current + curlen, end_in_buf, &curlen);
 
-                                if( current && strlen(current) )
-                                {
+                                if (current && strlen (current)) {
                                     /* if the value is a subcommand, let's exit immediately */
-                                    if( ! findparam_cmd( (const Clicmd*)cmd, current, curlen ) )
-                                    {
-                                        cmdinfo->param[cmdinfo->paramnum]->value[valnum]=strndup(current, curlen);
-                                        if( !cmdinfo->param[cmdinfo->paramnum]->value[valnum] )
-                                        {
-                                            destroycmdinfo(cmdinfo);
+                                    if (!findparam_cmd ((const Clicmd *) cmd, current, curlen)) {
+                                        cmdinfo->param[cmdinfo->paramnum]->value[valnum] = strndup (current, curlen);
+                                        if (!cmdinfo->param[cmdinfo->paramnum]->value[valnum]) {
+                                            destroycmdinfo (cmdinfo);
                                             goto exit;
                                         }
-                                        ++valnum ;
+                                        ++valnum;
                                     }
                                 }
 
@@ -999,107 +964,100 @@ static Cmdinfo *createcmdinfo( const Clisession *session, const Clicmd *cmd, cha
                             cmdinfo->param[cmdinfo->paramnum]->numval = valnum;
                             ++(cmdinfo->paramnum);
 
-                            if( (param->name[0] != '\0') && (valnum < param->numval) )
-                            {
-                                fprintf( session->term.out, ">> MISSING VALUE FOR PARAMETER \"%s\"\n", param->name );
-                                destroycmdinfo( cmdinfo );
+                            if ((param->name[0] != '\0') && (valnum < param->numval)) {
+                                fprintf (session->term.out, ">> MISSING VALUE FOR PARAMETER \"%s\"\n", param->name);
+                                destroycmdinfo (cmdinfo);
                                 cmdinfo = NULL;
                                 goto exit;
                             }
                         }
-                    } 
-                    else 
-                    {
-                        defval_found=1;
+                    } else {
+                        defval_found = 1;
                     }
                 }
                 ++parnum;
             }
-            while( param && param->name && ( strncmp(param->name, current, curlen)!=0 ) );
+            while (param && param->name && (strncmp (param->name, current, curlen) != 0));
 
-            if( (!cmdinfo->defval) && (defval_found) && (param_found == cmdinfo->paramnum) )
-            {
+            if ((!cmdinfo->defval) && (defval_found) && (param_found == cmdinfo->paramnum)) {
                 /* If we are here, we've found the default value */
-                cmdinfo->defval = malloc(curlen+1);
-                strncpy(cmdinfo->defval, current, curlen);
-                cmdinfo->defval[curlen]='\0';
+                cmdinfo->defval = malloc (curlen + 1);
+                strncpy (cmdinfo->defval, current, curlen);
+                cmdinfo->defval[curlen] = '\0';
 
             }
         }
     }
-    while( current && curlen );
+    while (current && curlen);
 
 exit:
     return cmdinfo;
 }
 
-void destroycmdinfo( Cmdinfo *cmdinfo )
+void
+destroycmdinfo (Cmdinfo * cmdinfo)
 {
     unsigned int paramcount, valcount;
 
-    if( cmdinfo->defval )
-    {
-        free( cmdinfo->defval );
+    if (cmdinfo->defval) {
+        free (cmdinfo->defval);
     }
 
-    for( paramcount=0; paramcount<cmdinfo->paramnum; ++paramcount )
-    {
-        valcount=0;
-        if( cmdinfo->param[paramcount]->name )
-            free( cmdinfo->param[paramcount]->name );
-        while( cmdinfo->param[paramcount]->value[valcount] )
-        {
-            free( cmdinfo->param[paramcount]->value[valcount] );
+    for (paramcount = 0; paramcount < cmdinfo->paramnum; ++paramcount) {
+        valcount = 0;
+        if (cmdinfo->param[paramcount]->name)
+            free (cmdinfo->param[paramcount]->name);
+        while (cmdinfo->param[paramcount]->value[valcount]) {
+            free (cmdinfo->param[paramcount]->value[valcount]);
             valcount++;
         }
-        free( cmdinfo->param[paramcount] );
+        free (cmdinfo->param[paramcount]);
     }
 
-    free( cmdinfo );
+    free (cmdinfo);
 }
 
-void dump_history( const Clisession *session )
+void
+dump_history (const Clisession * session)
 {
     unsigned int index, valid, cmdnum;
-    const Clihistory *hist=&(session->term.history);
+    const Clihistory *hist = &(session->term.history);
 
     index = hist->newid;
 
-    cmdnum = (hist->cmdnum<(hist->size+1)) ? 1 : hist->cmdnum - hist->size;
+    cmdnum = (hist->cmdnum < (hist->size + 1)) ? 1 : hist->cmdnum - hist->size;
 
     do {
-        valid = strlen(hist->entry[index]);
-        if( valid ) {
-            fprintf(session->term.out, "%d\t%s\n", cmdnum, hist->entry[index]);
+        valid = strlen (hist->entry[index]);
+        if (valid) {
+            fprintf (session->term.out, "%d\t%s\n", cmdnum, hist->entry[index]);
             cmdnum++;
-            }
-        index=(index<(hist->size)) ? index+1 : 0;
+        }
+        index = (index < (hist->size)) ? index + 1 : 0;
     }
-    while( (index != hist->newid) );
+    while ((index != hist->newid));
 }
 
-Cmdparam *findparam ( const Cmdinfo *info, const char *name )
+Cmdparam *
+findparam (const Cmdinfo * info, const char *name)
 {
     unsigned int count;
 
-    for( count=0; count<info->paramnum; ++count )
-    {
-        if( !strcmp( name, info->param[count]->name ) )
+    for (count = 0; count < info->paramnum; ++count) {
+        if (!strcmp (name, info->param[count]->name))
             return info->param[count];
     }
     return NULL;
 }
 
-Cmdparam *finddefparam ( const Cmdinfo *info )
+Cmdparam *
+finddefparam (const Cmdinfo * info)
 {
     unsigned int count;
 
-    for( count=0; count<info->paramnum; ++count )
-    {
-        if( !strlen( info->param[count]->name ) )
+    for (count = 0; count < info->paramnum; ++count) {
+        if (!strlen (info->param[count]->name))
             return info->param[count];
     }
     return NULL;
 }
-
-
