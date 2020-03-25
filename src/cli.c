@@ -959,56 +959,59 @@ static Cmdinfo *createcmdinfo( const Clisession *session, const Clicmd *cmd, cha
             do
             {
                 param = &(cmd->param[parnum]);
-                if( param && param->name && strlen(param->name) )
+                if( param && param->name )
                 {
-                    if( (curlen==strlen(param->name)) && !strncmp(current, param->name, strlen(param->name)) )
+                    if( strlen(param->name) ) 
                     {
-                        valnum = count = 0;
-
-                        /* It's good, we've found a parameter. So let's add it to the output structure (remember to free!!!) */
-                        cmdinfo->param[cmdinfo->paramnum] = malloc( sizeof(Cmdparam) );
-                        memset( cmdinfo->param[cmdinfo->paramnum], 0x0, sizeof(Cmdparam) );
-
-                        cmdinfo->param[cmdinfo->paramnum]->name = malloc(strlen(param->name)+1);
-                        strcpy(cmdinfo->param[cmdinfo->paramnum]->name, param->name);
-
-                        /* Let's add values if needed */
-                        while( (count < param->numval) && (count++ == valnum) )
+                        if( (curlen==strlen(param->name)) && !strncmp(current, param->name, strlen(param->name)) )
                         {
-                            /* The next word is the value of the given parameter */
-                            current = next_word( current+curlen, end_in_buf, &curlen );
+                            valnum = count = 0;
 
-                            if( current && strlen(current) )
+                            /* It's good, we've found a parameter. So let's add it to the output structure (remember to free!!!) */
+                            cmdinfo->param[cmdinfo->paramnum] = malloc( sizeof(Cmdparam) );
+                            memset( cmdinfo->param[cmdinfo->paramnum], 0x0, sizeof(Cmdparam) );
+
+                            cmdinfo->param[cmdinfo->paramnum]->name = malloc(strlen(param->name)+1);
+                            strcpy(cmdinfo->param[cmdinfo->paramnum]->name, param->name);
+
+                            /* Let's add values if needed */
+                            while( (count < param->numval) && (count++ == valnum) )
                             {
-                                /* if the value is a subcommand, let's exit immediately */
-                                if( ! findparam_cmd( (const Clicmd*)cmd, current, curlen ) )
+                                /* The next word is the value of the given parameter */
+                                current = next_word( current+curlen, end_in_buf, &curlen );
+
+                                if( current && strlen(current) )
                                 {
-                                    cmdinfo->param[cmdinfo->paramnum]->value[valnum]=strndup(current, curlen);
-                                    if( !cmdinfo->param[cmdinfo->paramnum]->value[valnum] )
+                                    /* if the value is a subcommand, let's exit immediately */
+                                    if( ! findparam_cmd( (const Clicmd*)cmd, current, curlen ) )
                                     {
-                                        destroycmdinfo(cmdinfo);
-                                        goto exit;
+                                        cmdinfo->param[cmdinfo->paramnum]->value[valnum]=strndup(current, curlen);
+                                        if( !cmdinfo->param[cmdinfo->paramnum]->value[valnum] )
+                                        {
+                                            destroycmdinfo(cmdinfo);
+                                            goto exit;
+                                        }
+                                        ++valnum ;
                                     }
-                                    ++valnum ;
                                 }
+
                             }
+                            cmdinfo->param[cmdinfo->paramnum]->numval = valnum;
+                            ++(cmdinfo->paramnum);
 
+                            if( (param->name[0] != '\0') && (valnum < param->numval) )
+                            {
+                                fprintf( session->term.out, ">> MISSING VALUE FOR PARAMETER \"%s\"\n", param->name );
+                                destroycmdinfo( cmdinfo );
+                                cmdinfo = NULL;
+                                goto exit;
+                            }
                         }
-                        cmdinfo->param[cmdinfo->paramnum]->numval = valnum;
-                        ++(cmdinfo->paramnum);
-
-                        if( (param->name[0] != '\0') && (valnum < param->numval) )
-                        {
-                            fprintf( session->term.out, ">> MISSING VALUE FOR PARAMETER \"%s\"\n", param->name );
-                            destroycmdinfo( cmdinfo );
-                            cmdinfo = NULL;
-                            goto exit;
-                        }
+                    } 
+                    else 
+                    {
+                        defval_found=1;
                     }
-                }
-                else
-                {
-                    defval_found=1;
                 }
                 ++parnum;
             }
