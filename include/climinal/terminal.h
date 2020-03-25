@@ -50,43 +50,43 @@ extern "C"
     typedef struct Cliterm       Cliterm;
     typedef struct Clihistory    Clihistory;
 
-    int     init_history    ( Clihistory *history, const unsigned int size );
-    void    add_history     ( Clihistory *history, const char *in_buf );
-    int     get_history     ( Clihistory *history, char *out_buf, int direction );
+    int  init_history ( Clihistory *history, const unsigned int size );
+    void add_history  ( Clihistory *history, const char *in_buf );
+    int  get_history  ( Clihistory *history, char *out_buf, int direction );
 
-    int     set_terminal    ( Cliterm *term );
-    int     res_terminal    ( Cliterm *term );
+    int set_terminal  ( Cliterm *term );
+    int res_terminal  ( Cliterm *term );
 
 
     struct Clihistory 
     {
-        unsigned int    newid;
-        unsigned int    getid;
-        unsigned int    lastid;
-        unsigned int    cmdnum;
-        unsigned int    size;
-        Climinal_buffer *entry;
+        unsigned int     newid;
+        unsigned int     getid;
+        unsigned int     lastid;
+        unsigned int     cmdnum;
+        unsigned int     size;
+        Climinal_buffer  *entry;
     };
 
 
     struct Cliterm
     {
         /* In and Out streams */
-        FILE                *in;
-        FILE                *out;
+        FILE            *in;
+        FILE            *out;
 
-        unsigned int        pos;
-        unsigned int        len;
+        unsigned int    pos;
+        unsigned int    len;
 
-        char                buffer[MAX_BUFLEN];
-        int                 buffer_modified;
+        char            buffer[MAX_BUFLEN];
+        int             buffer_modified;
 
 #ifdef HAVE_TERMIOS_H
-        struct termios      term_io;
+        struct termios  term_io;
 #endif
 
-        Clihistory       history;
-        char                *(*cmd_compl)(void) ;      
+        Clihistory      history;
+        char            *(*cmd_compl)(void) ;      
     };
 
 

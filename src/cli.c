@@ -535,8 +535,9 @@ completion_matches (Clisession * session, const char *text, unsigned int len)
             if (tempBuf) {
                 if (!retval) {
                     retval = malloc (MAX_NUM_COMPL_ENTRIES * sizeof (char *));
-                    if (!retval)
+                    if (!retval) {
                         return NULL;
+                    }
                     state = 1;
                 }
                 retval[matches++] = tempBuf;

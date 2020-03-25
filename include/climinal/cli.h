@@ -36,8 +36,8 @@ extern "C"
        The "Cmdinfo" struct contains the pointer passed to the callback. It should be inspected through
        the provided macros
      */
-    typedef struct Cmdinfo  Cmdinfo;
-    typedef struct Cmdparam Cmdparam;
+    typedef struct Cmdinfo   Cmdinfo;
+    typedef struct Cmdparam  Cmdparam;
 
     /* This is the definition of the user callback to be registered */
     typedef int (*Clicbk)(FILE *in, FILE *out, const Cmdinfo *cmdinfo, const char *cmd, void *cookie);
@@ -45,12 +45,12 @@ extern "C"
     /* This is the definition of the user callback to complete values at runtime */
     typedef int (*Valcbk)(char **val, void *cookie);
 
-    typedef struct Clicmd       Clicmd;
-    typedef struct Cliparam     Cliparam;
-    typedef struct Clicontext   Clicontext;
+    typedef struct Clicmd      Clicmd;
+    typedef struct Cliparam    Cliparam;
+    typedef struct Clicontext  Clicontext;
 
-    typedef struct Cliconfig    Cliconfig;
-    typedef struct Clihandle    Clihandle;
+    typedef struct Cliconfig   Cliconfig;
+    typedef struct Clihandle   Clihandle;
 
 
     /* These are the MACROs to handle the Cmdinfo structure without caring of its internals */
@@ -78,43 +78,43 @@ extern "C"
     /* Detailed types definition */
     struct Cliparam
     {
-        char            *name;
-        char            *description;
-        unsigned int    required;
-        unsigned int    numval;
-        Valcbk          val;
+        char          *name;
+        char          *description;
+        unsigned int  required;
+        unsigned int  numval;
+        Valcbk        val;
     };
 
     struct Clicmd 
     {
-        char            *name;
-        char            *brief;
-        char            *help;
-        Cliparam        *param;
-        void            *subcontext;
-        Clicmd          *subcmd;
-        Clicbk          cbk;
-        Valcbk          defval;
+        char      *name;
+        char      *brief;
+        char      *help;
+        Cliparam  *param;
+        void      *subcontext;
+        Clicmd    *subcmd;
+        Clicbk    cbk;
+        Valcbk    defval;
     };
 
     struct Clicontext
     {
-        Clicontext          *father;
-        Clicmd              *cmd;
-        char                *prompt;
-        unsigned int        depth;
+        Clicontext    *father;
+        Clicmd        *cmd;
+        char          *prompt;
+        unsigned int  depth;
     };
 
     struct Cliconfig
     {
-        unsigned int history_size;
-        unsigned int context_depth;
+        unsigned int  history_size;
+        unsigned int  context_depth;
     };
 
     struct Clihandle
     {
-        Clicontext          *maincontext;
-        Cliconfig           *config;
+        Clicontext  *maincontext;
+        Cliconfig   *config;
     };
 
 
@@ -124,9 +124,9 @@ extern "C"
      */
     struct Cmdparam
     {
-        char            *name;
-        unsigned int    numval;
-        char            *value[MAX_VAL_NUM];
+        char          *name;
+        unsigned int  numval;
+        char          *value[MAX_VAL_NUM];
     };
 
     /* Cmdinfo:
@@ -135,10 +135,10 @@ extern "C"
      */
     struct Cmdinfo
     {
-        char            *defval;
-        unsigned int    paramnum;
-        struct Cmdparam *param[MAX_PARAM_NUM];
-        char            new_prompt[256];
+        char             *defval;
+        unsigned int     paramnum;
+        struct Cmdparam  *param[MAX_PARAM_NUM];
+        char             new_prompt[256];
     };
 
     Cmdparam *findparam( const Cmdinfo *info, const char *name );

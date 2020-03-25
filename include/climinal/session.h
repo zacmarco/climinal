@@ -33,30 +33,29 @@ extern "C"
 #define MAX_STRLEN              (256)
 #define MAX_NUM_COMPL_ENTRIES   (256)
 
-    typedef struct Clisession   Clisession;
-    typedef char                **(*Clicompleter)(Clisession*,const char*,int,int);
+    typedef struct Clisession  Clisession;
+    typedef char   **(*Clicompleter)(Clisession*,const char*,int,int);
+    typedef char   prompt_t[MAX_STRLEN];
 
-    typedef char                prompt_t[MAX_STRLEN];
-
-    void    initsession     ( Clisession *session, Clihandle *handle, const FILE *in, const FILE *out, void *cookie );
-    void    endsession      ( Clisession *session );
-    int     readline        ( Clisession *session, const char *prompt );
-    void    setcompleter    ( Clisession *session, Clicompleter );
-    void    printhelp       ( Clisession *session );
+    void initsession   ( Clisession *session, Clihandle *handle, const FILE *in, const FILE *out, void *cookie );
+    void endsession    ( Clisession *session );
+    int  readline      ( Clisession *session, const char *prompt );
+    void setcompleter  ( Clisession *session, Clicompleter );
+    void printhelp     ( Clisession *session );
 
     struct Clisession
     {
         /* The active context */
-        Clicmd          *active_cmd;
-        Clicontext      *active_context;
-        Clicontext      *main_context;
-        void            *cookie;
+        Clicmd        *active_cmd;
+        Clicontext    *active_context;
+        Clicontext    *main_context;
+        void          *cookie;
 
-        prompt_t        *prompt_stack;
-        unsigned int    cur_depth;
+        prompt_t      *prompt_stack;
+        unsigned int  cur_depth;
 
-        Cliterm         term;
-        Clicompleter    completer;
+        Cliterm       term;
+        Clicompleter  completer;
     };
 
 #ifdef __cplusplus
