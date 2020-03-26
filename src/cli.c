@@ -675,6 +675,7 @@ parseline (Clisession * session)
     bufempty = (strlen (buf)) ? 0 : 1;
 
     if (!bufempty) {
+
         /* If a command, do it!!! */
         get_main_cmd (session, main_cmd);
         if (strlen (main_cmd) > 0) {
@@ -694,8 +695,9 @@ parseline (Clisession * session)
 
                     hist = &(session->term.history);
                     num = strtol (&(main_cmd[1]), NULL, 10);
-                    if (num <= 0 || (num >= (hist->cmdnum - 1))
-                            || (hist->cmdnum > (hist->size + 1) && num < (hist->cmdnum - (hist->size)))) {
+                    if ( (num <= 0) ||
+                         (num >= (hist->cmdnum)) ||
+                         ( (hist->cmdnum > (hist->size)) && (num < (hist->cmdnum - hist->size + 1)) ) ) {
                         fprintf (session->term.out, ">>COMMAND NUMBER %u NOT AVAILABLE\n", num);
                         return CLIMINAL_NO_ERROR;
                     }
@@ -712,6 +714,13 @@ parseline (Clisession * session)
                     fprintf (session->term.out, " %s\n", hist->entry[entry_id]);
                 }
             }
+
+            /* Add to history only if the command is different from the last added one
+             * This is to avoid having duplicates when recalling last command */
+            if(!islast_history(&(session->term.history), main_cmd)) {
+                add_history (&(session->term.history), main_cmd);
+            }
+            session->term.history.entry[session->term.history.newid][0] = '\0';
 
             if ((retval = parsecommon (session, main_cmd)) == CLIMINAL_E_NOT_FOUND) {
                 if ((cmd = find_active_cmd (session, &next_data))) {
@@ -730,9 +739,11 @@ parseline (Clisession * session)
                 }
             }
         }
-        add_history (&(session->term.history), buf);
-        session->term.history.entry[session->term.history.newid][0] = '\0';
     }
+
+    session->term.history.getid=session->term.history.lastid;
+
+            
 exit:
     return retval;
 }

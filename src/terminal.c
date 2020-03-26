@@ -160,11 +160,12 @@ get_history (Clihistory * hist, char *out_buf, int direction)
         switch (direction) {
             /* In both cases we need to understand if history has been already wrapped or not */
             case HISTORY_AFTER:
-                if (hist->getid != hist->lastid) {
-                    if (hist->getid < (hist->cmdnum - 1))
+                if ( (hist->getid != hist->lastid) ) {
+                    if ( hist->getid < (hist->size) ) {
                         hist->getid++;
-                    else
-                        hist->getid = 0;
+                    } else {
+                        hist->getid=0;
+                    }
                 }
                 break;
 
@@ -173,7 +174,7 @@ get_history (Clihistory * hist, char *out_buf, int direction)
                     if (hist->getid > 0)
                         hist->getid--;
                     else
-                        hist->getid = (hist->cmdnum - 1);
+                        hist->getid = (hist->size);
                 }
                 break;
         }
@@ -183,6 +184,19 @@ get_history (Clihistory * hist, char *out_buf, int direction)
 
     }
 
+    return retid;
+}
+
+int
+islast_history (Clihistory * hist, char *buf)
+{
+    int retid = 0;
+
+    if (hist->newid != hist->lastid) {
+        if(strcmp(buf, hist->entry[hist->lastid])==0) {
+            retid=1;
+        }
+    }
     return retid;
 }
 

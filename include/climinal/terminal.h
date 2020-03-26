@@ -50,9 +50,10 @@ extern "C"
     typedef struct Cliterm       Cliterm;
     typedef struct Clihistory    Clihistory;
 
-    int  init_history ( Clihistory *history, const unsigned int size );
-    void add_history  ( Clihistory *history, const char *in_buf );
-    int  get_history  ( Clihistory *history, char *out_buf, int direction );
+    int  init_history    ( Clihistory *history, const unsigned int size );
+    void add_history     ( Clihistory *history, const char *in_buf );
+    int  get_history     ( Clihistory *history, char *out_buf, int direction );
+    int  islast_history  ( Clihistory *history, char *str);
 
     int set_terminal  ( Cliterm *term );
     int res_terminal  ( Cliterm *term );
