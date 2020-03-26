@@ -697,7 +697,7 @@ parseline (Clisession * session)
                     num = strtol (&(main_cmd[1]), NULL, 10);
                     if ( (num <= 0) ||
                          (num >= (hist->cmdnum)) ||
-                         ( (hist->cmdnum > (hist->size)) && (num < (hist->cmdnum - hist->size + 1)) ) ) {
+                         ( (hist->cmdnum > (hist->size)) && (num < (hist->cmdnum - hist->size)) ) ) {
                         fprintf (session->term.out, ">>COMMAND NUMBER %u NOT AVAILABLE\n", num);
                         return CLIMINAL_NO_ERROR;
                     }
