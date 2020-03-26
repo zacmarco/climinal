@@ -35,7 +35,8 @@ include_directories(include)
  
 #However, the file(GLOB...) allows for wildcard additions:
 file(GLOB SOURCES "src/*.c")
-file(GLOB HEADERS "include/climinal/*.h")
+file(GLOB CLI_H "include/climinal/cli.h")
+file(GLOB ERROR_H "include/climinal/error.h")
 
 #Generate the shared library from the sources
 add_library(climinal SHARED ${SOURCES})
@@ -43,7 +44,7 @@ add_library(climinal SHARED ${SOURCES})
 #Set the location for library installation -- i.e., /usr/lib in this case
 # not really necessary in this example. Use "sudo make install" to apply
 install(TARGETS climinal DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-install(FILES ${HEADERS} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/climinal)
+install(FILES ${CLI_H} ${ERROR_H} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/climinal)
 
 #Debian Package generator
 SET(CPACK_GENERATOR "DEB")
