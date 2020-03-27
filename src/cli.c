@@ -482,7 +482,7 @@ values_generator (Clisession * session, int *done, int *matches)
             while ((param->name) && (!p_matches)) {
                 if ((strlen (param->name) == 0) && (param->val)) {
                     int w_distance =
-                        word_distance (session->term.buffer, &(session->term.buffer[session->term.pos]),
+                        word_distance (strstr(session->term.buffer, session->active_cmd->name), &(session->term.buffer[session->term.pos]),
                                 &(session->term.buffer[MAX_BUFLEN]));
                     /* For now let's just focus on cases where default value is the first word after the command word */
                     if (w_distance == 1) {
@@ -562,14 +562,6 @@ completion (Clisession * session, const char *text, int start, int end)
     /* Let's understand whether we have a reasonable word to complete */
     session->active_cmd = find_active_cmd (session, NULL);
 
-    /*
-       char *last;
-       unsigned int len;
-       last=last_word(session->term.buffer, session->term.buffer+session->term.len, &len);
-       strncpy(word, last, len);
-       word[len]='\0';
-       printf("last word: \"%s\"\n", word); 
-     */
     /* Ok... let's complete it! */
     matches = completion_matches (session, text, end - start);
 
