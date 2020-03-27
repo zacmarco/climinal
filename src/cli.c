@@ -717,8 +717,8 @@ parseline (Clisession * session)
 
             /* Add to history only if the command is different from the last added one
              * This is to avoid having duplicates when recalling last command */
-            if(!islast_history(&(session->term.history), main_cmd)) {
-                add_history (&(session->term.history), main_cmd);
+            if(!islast_history(&(session->term.history), buf)) {
+                add_history (&(session->term.history), buf);
             }
             session->term.history.entry[session->term.history.newid][0] = '\0';
 
