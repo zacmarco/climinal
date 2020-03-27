@@ -18,7 +18,7 @@ jobs:
     - name: Generate and install tools
       run: cd tools/cmake && make package && make install
     - name: Run climinalbuilder
-      run: cd examples/testtool && ../../verify/bin/climinalbuilder testtool.xml testtool && ../../verify/bin/climinalbuilder testtool.json testtool_json && diff testtool.c <(sed 's/testtool_json/testtool/g' testtool_json.c)
+      run: cd examples/testtool && echo "XML..." && ../../verify/bin/climinalbuilder testtool.xml testtool && echo "DONE" && echo "JSON..." && ../../verify/bin/climinalbuilder testtool.json testtool_json && echo "DONE" && diff testtool.c <(sed 's/testtool_json/testtool/g' testtool_json.c)
     - name: Build testtool
       run: cd examples/testtool && gcc testtool.c testtool_main.c testtool_cbk.c -I$PWD/../../verify/include -L$PWD/../../verify/lib/ -lcliminal -lm -o testtool && ls -l
     - name: Run testtool
