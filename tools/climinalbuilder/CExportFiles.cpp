@@ -677,7 +677,7 @@ void CExportFiles::WriteParametersRules(const MapCommands* mc,const string* sCtx
         }
       }
 
-      *oss << "\t\t{NULL,\tNULL,\t0,\t0,\t0,\tNULL}\n};\n";
+      *oss << "\t\t{NULL,\tNULL,\t0,\t0,\tNULL}\n};\n";
     }
       
     if(!itcmd->second->HasSubCommands())
