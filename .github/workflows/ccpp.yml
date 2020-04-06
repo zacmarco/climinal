@@ -6,7 +6,8 @@ jobs:
   build-ubuntu-16_04:
 
     runs-on: ubuntu-16.04
-    
+    env:
+      BOOST_ROOT : "/usr/local/share/boost/1.58.0"   
     steps:
     - uses: actions/checkout@v1
     - name: Generate Makefiles
