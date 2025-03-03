@@ -15,6 +15,69 @@ Climinal is an open-source software library designed to help developers create i
 - **Support for default parameters** and dynamically generated values.
 - **Tools for generating C code from XML/JSON definitions.**
 
+## Callback implementation
+
+# Command Callback
+The command callback in Climinal is defined with the signature:
+
+`int cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line, void *cookie)`
+
+
+### Parameters:
+
+- **FILE\* in and FILE\* out:**
+These represent the input and output streams, respectively. They allow the callback to read user input and write output directly.
+
+ - **const Cmdinfo \*info:**
+This pointer provides metadata about the command being executed. It typically contains details such as the command name, its description, and the parameters expected by the command.
+
+- **const char\* line:**
+This is the raw command line entered by the user. It can be parsed further if needed.
+
+- **void \*cookie:**
+The cookie argument is a user-defined pointer that can be set when registering the command. It is used to pass additional context or custom data to the callback without altering the function’s signature. For example, you might use it to store configuration data or a pointer to a resource that the callback requires to perform its work.
+
+### Return Value:
+
+The callback returns an int—typically 0 to indicate success or a non-zero value to signal an error.
+
+## Value Completion Callback
+The value completion callback is defined with the following signature:
+
+`int values_cbk(char **val, void *cookie)`
+
+### Parameters:
+
+- **char \*\*val:**
+This is a pointer to an array of strings. The completion callback is expected to fill this array with possible completions for the value currently being typed by the user.
+
+- **void \*cookie:**
+Similar to the command callback, the cookie here is a user-defined pointer that allows you to pass additional contextual information to the completion callback. This might include state or configuration details needed to generate the appropriate list of completions.
+
+### Return Value:
+
+The function returns an int—usually representing the number of completions added to the array.
+
+## Navigational Macros
+Climinal provides several macros to simplify the retrieval and handling of command parameters. These macros abstract away the underlying details of parameter storage and help maintain a consistent interface. The key macros are:
+
+- **CLIMINAL_GET_DEFVAL:**
+Retrieves the default value for a parameter. If the user does not supply a value, this macro is used to fetch what should be used as the default.
+
+- **CLIMINAL_GET_PARAM_NAME:**
+Returns the name of a given parameter. This is useful for generating help messages or error messages indicating which parameter is missing or misconfigured.
+
+- **CLIMINAL_GET_PARAM_NUM:**
+Obtains the number of parameters expected or provided for a command. This helps in validating whether the correct number of arguments has been supplied by the user.
+
+- **CLIMINAL_GET_PARAM_NUM_VAL:**
+Specifically used to retrieve a parameter that is expected to be a numeric value. It typically performs the necessary conversion from string to a numeric type and validates the value.
+
+- **CLIMINAL_GET_PARAM_VAL:**
+Retrieves the string value of a command parameter. This macro is used when a parameter is expected to be a textual value.
+
+These macros are designed to reduce boilerplate code when handling command parameters and to ensure that commands have a consistent way of accessing parameter data. They make it easier to write commands that are both robust and user-friendly.
+
 ## Download and Installation
 ### Cloning the Repository
 ```sh
