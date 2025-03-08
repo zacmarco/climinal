@@ -465,7 +465,166 @@ cc -o mycli mycli.c mycli_cbk.c mycli_main.c -lcliminal -lm
 ./mycli
 ```
 
-## Conclusion
+# History Management in Climinal
+
+Climinal provides built-in command history management, similar to how history works in **BASH**. This allows users to recall, navigate, and reuse previously executed commands efficiently.
+
+---
+
+## Listing Command History
+
+The **`history`** command is implicitly available in every context of a Climinal-based CLI. When executed, it displays a numbered list of previously executed commands, starting from the oldest to the most recent.
+
+### Example Usage
+
+#### User Input:
+```sh
+main> history
+```
+
+#### Example Output:
+```sh
+  1  info system
+  2  info all
+  3  credits
+  4  set mode automatic
+  5  show status
+```
+
+Each command is listed with an associated sequence number. This number can be used to recall and re-execute a specific command.
+
+---
+
+## Recalling Commands from History
+
+Like in **BASH**, Climinal allows recalling a specific command using the **"!"** symbol followed by the sequence number from the history list.
+
+### Example Usage
+
+#### User Input:
+```sh
+main> !3
+```
+
+#### Equivalent to:
+```sh
+main> credits
+```
+
+This will execute the **`credits`** command again, just as if the user had typed it manually.
+
+---
+
+## Re-executing the Last Command
+
+To re-execute the most recently executed command, the user can use:
+```sh
+main> !!
+```
+This works the same way as in **BASH** and executes the last command in history.
+
+### Example Usage
+
+#### User Input:
+```sh
+main> !!
+```
+
+#### Equivalent to:
+If the last executed command was:
+```sh
+main> show status
+```
+Then **`!!`** will execute it again:
+```sh
+main> show status
+```
+
+---
+
+## Navigating Through History Using Arrow Keys
+
+Like **BASH**, Climinal supports command history navigation using the **Up** and **Down** arrow keys.
+
+- **Pressing the Up arrow (`↑`)** retrieves the previous command in history.
+- **Pressing the Down arrow (`↓`)** moves forward through the history, towards more recent commands.
+
+### Example Usage
+
+1. Suppose the command history contains:
+   ```sh
+   1  info system
+   2  set mode automatic
+   3  show status
+   ```
+2. If the user is at the prompt and presses **Up (`↑`)** once, the command line will change to:
+   ```sh
+   main> show status
+   ```
+3. Pressing **Up (`↑`)** again:
+   ```sh
+   main> set mode automatic
+   ```
+4. Pressing **Down (`↓`)** will return to **show status**.
+5. Pressing **Down (`↓`)** again will return to an empty command line, indicating that the user has reached the most recent point in history.
+
+This feature allows users to efficiently recall and modify previous commands without retyping them.
+
+---
+
+## Using History for Efficient CLI Interaction
+
+Using history features, a user can quickly repeat or modify previous commands without retyping them. This is particularly useful for:
+- Debugging commands in a long CLI session.
+- Running frequent or complex commands multiple times.
+- Quickly switching between different configurations or modes.
+
+---
+
+## Example Full Session Using History
+
+```sh
+main> info system
+System Information:
+  OS: Linux
+  Kernel: 5.15.0
+  Architecture: x86_64
+
+main> set mode automatic
+Mode set to: Automatic
+
+main> history
+  1  info system
+  2  set mode automatic
+
+main> !1
+System Information:
+  OS: Linux
+  Kernel: 5.15.0
+  Architecture: x86_64
+
+# User presses Up (`↑`) key
+main> set mode automatic  # Previous command appears
+
+# User presses Up (`↑`) key again
+main> info system  # Older command appears
+```
+
+---
+
+### Summary of History Commands in Climinal
+
+| Command | Description |
+|---------|------------|
+| `history` | Displays the list of previously executed commands with numbers. |
+| `!<num>` | Executes the command with the specified history number. |
+| `!!` | Executes the last executed command again. |
+| `↑ (Up Arrow)` | Scrolls backward through command history. |
+| `↓ (Down Arrow)` | Scrolls forward through command history. |
+
+These history features make Climinal's CLI environment much more user-friendly and efficient for interactive command execution.
+
+# Conclusion
 Climinal provides a structured way to build interactive CLI applications with auto-completion, strict validation, and hierarchical contexts. 
 
 For more details, visit the [GitHub repository](https://github.com/zacmarco/climinal).
