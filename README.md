@@ -23,7 +23,7 @@ Climinal structures CLI commands in a hierarchical tree, where:
 - **Commands** execute specific actions
 - **Parameters** define arguments for commands
 - **Subcommands** specializations of commands that allow further input customization
-- 
+  
 # Generalized Command Tree Structure
 
 The CLI command structure is organized in a command tree.
@@ -47,6 +47,211 @@ root_context
 │           ├── parameter_6
 ├── command_7
 ```
+
+# Contexts, Commands, Subcommands, and Parameters in Climinal
+
+Climinal organizes a CLI using a structured **command tree**. This hierarchical tree consists of **contexts**, **commands**, **subcommands**, and **parameters**, each playing a crucial role in defining how the CLI operates. To properly design a CLI with Climinal, it is essential to understand their relationships, their fields, and how to navigate between them effectively.
+
+---
+
+## Contexts
+### Definition
+A **context** in Climinal defines a **CLI scope** where a specific set of commands is available. The root of the command tree is a special context from which all other commands originate. Additional contexts are created when commands lead to new areas of the CLI, essentially scoping commands in a meaningful way.
+
+### Fields Defining a Context
+Each context is specified in the XML or JSON file with fields that define its properties. Based on `testtool.xml`, a context has:
+- **A name**: Identifies the context uniquely.
+- **A prompt**: Defines what the CLI prompt looks like when inside this context.
+- **Commands**: Specifies the set of commands available in this context.
+
+### Relationship with Commands
+Each **context** contains **commands**, but **a command can be the parent of only one context**. If a command transitions into a new context, that context will be activated after the command executes.
+
+### Example of Contexts in XML
+```xml
+<context>
+    <name>main</name>
+    <prompt>main</prompt>
+    <command>
+        <name>network</name>
+        <context>network</context>
+    </command>
+</context>
+
+<context>
+    <name>network</name>
+    <prompt>network</prompt>
+    <command>
+        <name>set_ip</name>
+        <param>
+            <name>address</name>
+            <required>true</required>
+        </param>
+    </command>
+</context>
+```
+### Navigation Between Contexts
+- When in `main`, entering `network` moves the CLI into the `network` context.
+- The prompt changes from `main>` to `network>`, and only the commands in the `network` context become available.
+
+---
+
+## Commands
+### Definition
+A **command** represents an **action** a user can execute in a given context. It is the primary way of interacting with the CLI and may:
+1. Execute an action directly.
+2. Have **parameters** that modify its behavior.
+3. Lead to a **new context**.
+4. Contain **subcommands** for further specialization.
+
+### Fields Defining a Command
+- **A name**: The keyword the user types to trigger the command.
+- **An optional associated context**: If present, entering this command moves the user into a new CLI context.
+- **Optional parameters**: The data inputs required for execution.
+
+### Example of Commands in XML
+```xml
+<command>
+    <name>list</name>
+</command>
+
+<command>
+    <name>set</name>
+    <param>
+        <name>value</name>
+        <required>true</required>
+    </param>
+</command>
+```
+- `list` runs with no additional input.
+- `set` requires a `value` parameter.
+
+---
+
+## Subcommands
+### Definition
+A **subcommand** is simply a **command nested inside another command**. Subcommands allow specialization of a command instead of using parameters.
+
+### Fields Defining a Subcommand
+Since a **subcommand is just a command**, it has the same fields as a command:
+- **A name**
+- **An optional context**
+- **Optional parameters**
+- **Optional further subcommands**
+
+### When to Use a Subcommand vs. a Parameter
+| Use Case | Subcommand | Parameter |
+|----------|-----------|-----------|
+| **When the command has distinct behaviors requiring different logic** | ✅ Yes | ❌ No |
+| **When the command takes a value as input** | ❌ No | ✅ Yes |
+| **When auto-completion should show clear options** | ✅ Yes | ❌ No |
+| **When the command needs further nesting for future extension** | ✅ Yes | ❌ No |
+
+#### Example: Setting an IP Address
+| Approach | Command & Parameter | Command & Subcommand |
+|----------|----------------------|----------------------|
+| **Syntax** | `set_ip 192.168.1.1` | `network set ip 192.168.1.1` |
+| **Structure** | `set_ip` with a required parameter `address` | `set` command with `ip` as a subcommand |
+| **When to Use** | If `set_ip` is a standalone command | If `set` has multiple subcommands like `set dns`, `set gateway` |
+
+### Example of Subcommands in XML
+```xml
+<command>
+    <name>set</name>
+    <command>
+        <name>ip</name>
+        <param>
+            <name>address</name>
+            <required>true</required>
+        </param>
+    </command>
+</command>
+```
+- `set` is a general command.
+- `ip` is a subcommand under `set`, requiring an `address` parameter.
+
+---
+
+## Parameters
+### Definition
+A **parameter** provides input values to a command. Some parameters are required, while others are optional.
+
+### Fields Defining a Parameter
+- **A name**: The name used in the tree definition.
+- **Required flag**: Specifies if the parameter is mandatory.
+- **Optional callback**: Allows dynamic value generation for auto-completion.
+
+### Example of Parameters in XML
+```xml
+<command>
+    <name>add_user</name>
+    <param>
+        <name>username</name>
+        <required>true</required>
+    </param>
+</command>
+```
+- `add_user` requires a `username` parameter.
+
+---
+
+## 5. Relations Between Contexts, Commands, Subcommands, and Parameters
+The **command tree** follows these rules:
+1. **A context contains commands.**
+2. **A command may have parameters, subcommands, or transition to a new context.**
+3. **A command can be the parent of only one context.**
+4. **A command with subcommands may have parameters as well.**
+5. **A parameter belongs to only one command.**
+6. **A required parameter must always be specified by the user.**
+
+---
+
+## Example: Designing a CLI for a Smart Home System
+### Context Design
+- `home>` (Root)
+  - `device` → Leads to the `device>` context.
+  - `settings` → Leads to the `settings>` context.
+
+- `device>`
+  - `list` → Lists all devices.
+  - `control`
+    - `on <device_id>` → Turns a device on.
+    - `off <device_id>` → Turns a device off.
+
+- `settings>`
+  - `wifi` → Leads to `wifi>` context.
+  - `mode`
+    - `eco` → Enables eco mode.
+    - `performance` → Enables performance mode.
+
+### XML Definition
+```xml
+<context>
+    <name>home</name>
+    <prompt>home</prompt>
+    <command>
+        <name>device</name>
+        <context>device</context>
+    </command>
+    <command>
+        <name>settings</name>
+        <context>settings</context>
+    </command>
+</context>
+```
+
+---
+
+## Summary
+- **Contexts define available commands and prompt styles.**
+- **Commands are actions within a context.**
+- **Subcommands specialize a command instead of using parameters.**
+- **Parameters provide input values.**
+- **Using subcommands makes sense when different logic is required.**
+- **Using parameters makes sense when a command takes a value.**
+
+This structure ensures **clarity**, **scalability**, and **ease of use** in CLI design. 🚀
+
 
 # Callbacks implementation
 
