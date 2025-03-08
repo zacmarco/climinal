@@ -195,7 +195,7 @@ A **parameter** provides input values to a command. Some parameters are required
 
 ---
 
-## 5. Relations Between Contexts, Commands, Subcommands, and Parameters
+## Relations Between Contexts, Commands, Subcommands, and Parameters
 The **command tree** follows these rules:
 1. **A context contains commands.**
 2. **A command may have parameters, subcommands, or transition to a new context.**
