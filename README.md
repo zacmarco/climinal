@@ -15,7 +15,7 @@ Climinal is an open-source software library designed to help developers create i
 - **Support for default parameters** and dynamically generated values.
 - **Tools for generating C code from XML/JSON definitions.**
 
-## Defining the Command Tree
+# Command Tree
 
 Climinal structures CLI commands in a hierarchical tree, where:
 
@@ -24,7 +24,7 @@ Climinal structures CLI commands in a hierarchical tree, where:
 - **Parameters** define arguments for commands
 - **Subcommands** specializations of commands that allow further input customization
   
-# Generalized Command Tree Structure
+## Generalized Command Tree Structure
 
 The CLI command structure is organized in a command tree.
 Every command belongs to a context, and the root node of the whole tree is called the **root context**
