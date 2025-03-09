@@ -65,7 +65,7 @@ Each context is specified in the XML or JSON file with fields that define its pr
 - **Commands**: Specifies the set of commands available in this context.
 
 ### Relationship with Commands
-Each **context** contains **commands**, but **a command can be the parent of only one context**. If a command transitions into a new context, that context will be activated after the command executes.
+Each **context** contains **commands**, but **a command can be the parent of a different context as well**. Such command allows transitions into the new context, that will be activated after the command executes.
 
 ### Example of Contexts in XML
 ```xml
