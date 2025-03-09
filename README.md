@@ -460,15 +460,9 @@ Where:
 
 
 ### Implementing Callbacks
-Create a C file (e.g. `mycli_cbk.c`) to implement command logic:
-```c
-void show_version_callback(void *priv_data) {
-    printf("CLI Version 1.0\n");
-}
-void configure_set_callback(void *priv_data) {
-    printf("Applying configuration\n");
-}
-```
+Create a C file (e.g. `mycli_cbk.c`) to implement command logic.
+Please refer to previous session for callback signatures and implementation details.
+
 
 ### Compiling Your CLI
 ```sh
