@@ -150,7 +150,7 @@ Since a **subcommand is just a command**, it has the same fields as a command:
 #### Example: Setting an IP Address
 | Approach | Command & Parameter | Command & Subcommand |
 |----------|----------------------|----------------------|
-| **Syntax** | `set_ip 192.168.1.1` | `network set ip 192.168.1.1` |
+| **Syntax** | `set_ip 192.168.1.1` | `set ip 192.168.1.1` |
 | **Structure** | `set_ip` with a required parameter `address` | `set` command with `ip` as a subcommand |
 | **When to Use** | If `set_ip` is a standalone command | If `set` has multiple subcommands like `set dns`, `set gateway` |
 
