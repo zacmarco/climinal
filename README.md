@@ -313,26 +313,7 @@ int cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line, void *cookie
 }
 ```
 
-## Value Completion Callback
-The value completion callback is defined with the following signature:
-
-```c
-int values_cbk(char **val, void *cookie)
-```
-
-### Parameters:
-
-- **char \*\*val:**
-This is a pointer to an array of strings. The completion callback is expected to fill this array with possible completions for the value currently being typed by the user.
-
-- **void \*cookie:**
-Similar to the command callback, the cookie (aka *priv_data*) is the user-defined pointer that is normally passed to the command callbacks, allowing you to pass additional contextual information to the value completion callback. This might include state or configuration details needed to generate the appropriate list of completions.
-
-### Return Value:
-
-The function returns an int—usually representing the number of completions added to the array.
-
-## Navigational Macros
+### Navigational Macros
 Climinal provides several macros to simplify the retrieval and handling of command parameters within the code of command callbacks. These macros abstract away the underlying details of parameter storage and help maintain a consistent interface. The key macros are:
 
 - **CLIMINAL_GET_DEFVAL:**
@@ -352,7 +333,27 @@ Retrieves the string value of a command parameter. This macro is used when a par
 
 These macros are designed to reduce boilerplate code when handling command parameters and to ensure that commands have a consistent way of accessing parameter data. They make it easier to write commands that are both robust and user-friendly.
 
-### Error codes
+
+## Value Completion Callback
+The value completion callback is defined with the following signature:
+
+```c
+int values_cbk(char **val, void *cookie)
+```
+
+### Parameters:
+
+- **char \*\*val:**
+This is a pointer to an array of strings. The completion callback is expected to fill this array with possible completions for the value currently being typed by the user.
+
+- **void \*cookie:**
+Similar to the command callback, the cookie (aka *priv_data*) is the user-defined pointer that is normally passed to the command callbacks, allowing you to pass additional contextual information to the value completion callback. This might include state or configuration details needed to generate the appropriate list of completions.
+
+### Return Value:
+
+The function returns an int—usually representing the number of completions added to the array.
+
+## Error codes
 
 - **CLIMINAL_NO_ERROR** – Command executed successfully
 - **CLIMINAL_ERROR_INVALID_PARAM** – Invalid parameter
