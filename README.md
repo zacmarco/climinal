@@ -283,15 +283,32 @@ The callback returns an int—typically 0 to indicate success or a non-zero valu
 
 ### Example Callback implementation
 
-```c
-#include "climinal.h"
+The following example is taken from sample application *testtool*:
 
-int command_3_callback(int argc, char **argv, void *priv_data) {
-    // Get parameter values
-    const char *param1 = CLIMINAL_GET_PARAM_VAL(0);
-    const char *param2 = (argc > 1) ? CLIMINAL_GET_PARAM_VAL(1) : "default";
-    
-    printf("Executing command_3 with %s and %s\n", param1, param2);
+```c
+#include <unistd.h>
+#include <string.h>
+#include "testtool.h"
+
+int cbk(FILE* in, FILE* out, const Cmdinfo *info, const char* line, void *cookie)
+{
+    int param, val;
+
+    fprintf(out, "Full command line: \"%s\"\n", line);
+
+    if( CLIMINAL_GET_DEFVAL(info) )
+        fprintf(out, "Default Value: \"%s\"\n", CLIMINAL_GET_DEFVAL(info));
+
+    for( param=0; param<CLIMINAL_GET_PARAM_NUM(info); ++param ) {
+        fprintf(out, "Parameter n.%d: \"%s\"\n", param, CLIMINAL_GET_PARAM_NAME(info, param));
+        for( val=0; val<CLIMINAL_GET_PARAM_NUM_VAL(info, param); ++val) {
+            fprintf(out, "Value n.%d: \"%s\"\n", val, CLIMINAL_GET_PARAM_VAL(info, param)[val]);
+        }
+        
+    }
+    if( !strncmp(line, "c0_d", strlen("c0_d")) ) {
+            CLIMINAL_SET_NEXT_PROMPT(cmdinfo, "c0_d_runtime");
+    }
     return CLIMINAL_NO_ERROR;
 }
 ```
@@ -309,7 +326,7 @@ int values_cbk(char **val, void *cookie)
 This is a pointer to an array of strings. The completion callback is expected to fill this array with possible completions for the value currently being typed by the user.
 
 - **void \*cookie:**
-Similar to the command callback, the cookie here is a user-defined pointer that allows you to pass additional contextual information to the completion callback. This might include state or configuration details needed to generate the appropriate list of completions.
+Similar to the command callback, the cookie (aka *priv_data*) is the user-defined pointer that is normally passed to the command callbacks, allowing you to pass additional contextual information to the value completion callback. This might include state or configuration details needed to generate the appropriate list of completions.
 
 ### Return Value:
 
