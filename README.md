@@ -210,6 +210,15 @@ The **command tree** follows these rules:
 5. **A parameter belongs to only one command.**
 6. **A required parameter must always be specified by the user.**
 
+## Implicit Commands
+
+Each context includes the following built-in commands:
+
+  - **exit** – Moves back one context in the hierarchy.
+  - **end** – Returns to the root context.
+  - **history** – Displays the command history.
+  - **bye** – Terminates the CLI.
+
 ---
 
 ## Example: Designing a CLI for a Smart Home System
