@@ -1,12 +1,24 @@
 # Climinal: Interactive CLI Framework
 
-## Overview
+# Table of Contents
+- [Overview](#overview)
+- [Features](#features)
+- [Command tree](#command-tree)
+  - [Generalized Command Tree structure](#generalized-command-tree-structure)
+  - [Contexts](#contexts)
+  - [Commands](#commands)
+  - [Subcommands](#subcommands)
+  - [Parameters](#parameters)
+<TBC>
+
+
+# Overview
 Climinal is an open-source software library for **C/C++** applications designed to help developers create interactive command-line interfaces (CLIs) with multiple contexts, custom prompts, auto-completion, and structured command validation. It is particularly well-suited for embedded devices, following a HOST/TARGET model analogous to cross-compilation environments.
 
 - The **HOST** machine is where the CLI is designed and configured.
 - The **TARGET** machine is where the CLI runs after deployment.
 
-## Features
+# Features
 - **Hierarchical CLI structure** with nested contexts.
 - **Strict command validation** ensuring no ambiguity.
 - **Auto-completion** based on predefined structures and runtime callbacks.
@@ -17,7 +29,7 @@ Climinal is an open-source software library for **C/C++** applications designed 
 
 # Command Tree
 
-Climinal structures CLI commands in a hierarchical tree, where:
+Climinal organizes a CLI using a structured **command tree**. This hierarchical tree consists of **contexts**, **commands**, **subcommands**, and **parameters**, each playing a crucial role in defining how the CLI operates. To properly design a CLI with Climinal, it is essential to understand their relationships, their fields, and how to navigate between them effectively.
 
 - **Contexts** define groups of commands
 - **Commands** execute specific actions
@@ -47,12 +59,6 @@ root_context
 │           ├── parameter_6
 ├── command_7
 ```
-
-# Contexts, Commands, Subcommands, and Parameters in Climinal
-
-Climinal organizes a CLI using a structured **command tree**. This hierarchical tree consists of **contexts**, **commands**, **subcommands**, and **parameters**, each playing a crucial role in defining how the CLI operates. To properly design a CLI with Climinal, it is essential to understand their relationships, their fields, and how to navigate between them effectively.
-
----
 
 ## Contexts
 ### Definition
