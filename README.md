@@ -1,7 +1,7 @@
 # Climinal: Interactive CLI Framework
 
 ## Overview
-Climinal is an open-source software library designed to help developers create interactive command-line interfaces (CLIs) with multiple contexts, custom prompts, auto-completion, and structured command validation. It is particularly well-suited for embedded devices, following a HOST/TARGET model analogous to cross-compilation environments.
+Climinal is an open-source software library for **C/C++** applications designed to help developers create interactive command-line interfaces (CLIs) with multiple contexts, custom prompts, auto-completion, and structured command validation. It is particularly well-suited for embedded devices, following a HOST/TARGET model analogous to cross-compilation environments.
 
 - The **HOST** machine is where the CLI is designed and configured.
 - The **TARGET** machine is where the CLI runs after deployment.
